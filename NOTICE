@@ -1,0 +1,22 @@
+turkmorph
+Copyright 2026 Muhammet Yusuf Kaydin
+
+The source code is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The runtime tables shipped in data/ (and in turkmorph/data/ inside the wheel)
+are derived from the third-party resources below; each keeps its own license.
+
+  * Zemberek-NLP dictionaries (lexicon.tsv, proper_words.txt)
+    https://github.com/ahmetaa/zemberek-nlp
+    Apache License 2.0, Copyright 2018 Ahmet A. Akın, Mehmet D. Akın
+    (data/raw/zemberek-LICENSE)
+
+  * Universal Dependencies Turkish treebanks (analysis costs, overrides,
+    underspecified suffix tokens; lexicon additions)
+    https://universaldependencies.org/
+      UD_Turkish-BOUN, -Kenet, -Penn, -Tourism, -FrameNet: CC BY-SA 4.0
+      UD_Turkish-IMST: CC BY-NC-SA 3.0
+
+  * BellaTurca corpus sample (word frequencies, language-id and LEX BPE
+    statistics: wordfreq.tsv, langid.json, lex_bpe.json, attested_stems.txt)
+    https://huggingface.co/datasets/turkish-nlp-suite/BellaTurca

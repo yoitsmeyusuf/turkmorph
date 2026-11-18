@@ -1,0 +1,109 @@
+# Build wheels for Linux / macOS / Windows and an sdist on every push to main and on tags.
+# A tag v* additionally publishes to PyPI with trusted publishing (no token stored):
+#   PyPI -> Your projects -> Publishing -> add GitHub publisher:
+#   owner yoitsmeyusuf, repo turkmorph, workflow release.yml, environment pypi
+name: release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wheels:
+    name: wheel ${{ matrix.os }} ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, target: x86_64, smoke: true }
+          - { os: ubuntu-latest, target: aarch64, smoke: false }
+          - { os: macos-14, target: aarch64, smoke: true }
+          - { os: macos-14, target: x86_64, smoke: false }
+          - { os: windows-latest, target: x64, smoke: true }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Stage runtime tables
+        run: python scripts/stage_package_data.py
+      - uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist
+          manylinux: auto
+      - name: Smoke test the wheel outside the checkout
+        if: matrix.smoke
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/venv"
+          if [ -f "$RUNNER_TEMP/venv/Scripts/python.exe" ]; then PY="$RUNNER_TEMP/venv/Scripts/python.exe"; else PY="$RUNNER_TEMP/venv/bin/python"; fi
+          "$PY" -m pip install --no-index --find-links dist turkmorph
+          cp scripts/smoke_wheel.py "$RUNNER_TEMP/"
+          cd "$RUNNER_TEMP"
+          "$PY" -I smoke_wheel.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.target }}
+          path: dist
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Stage runtime tables
+        run: python scripts/stage_package_data.py
+      - uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build the Rust runtime into the checkout
+        run: |
+          pip install maturin pytest
+          maturin build --release -o build/wheels
+          python -c "
+          import glob, zipfile
+          z = zipfile.ZipFile(sorted(glob.glob('build/wheels/turkmorph-*.whl'))[-1])
+          for n in z.namelist():
+              if n.endswith('.so') and n.rsplit('/', 1)[-1].startswith('_fast'):
+                  open('turkmorph/' + n.rsplit('/', 1)[-1], 'wb').write(z.read(n))
+          "
+      - name: Test suite (LM tests need torch and are skipped)
+        run: python -m pytest -q --ignore-glob='tests/test_lm_*' --ignore=tests/test_server.py
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [wheels, sdist, tests]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*"
+          path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1

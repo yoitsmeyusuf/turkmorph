@@ -3,6 +3,8 @@ name = "turkmorph_rs"
 version = "0.1.0"
 edition = "2021"
 description = "Rust runtime for the TurkMorph lossless Turkish morphological tokenizer"
+license = "Apache-2.0"
+repository = "https://github.com/yoitsmeyusuf/turkmorph"
 
 [lib]
 name = "turkmorph_rs"
@@ -13,7 +15,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
 rustc-hash = "2"
 smallvec = { version = "1", features = ["union", "const_generics"] }
-pyo3 = { version = "0.22", features = ["abi3-py38"], optional = true }
+pyo3 = { version = "0.22", features = ["abi3-py310"], optional = true }
 
 [features]
 python = ["pyo3/extension-module"]

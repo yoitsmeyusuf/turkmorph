@@ -7,6 +7,51 @@ deterministik olarak üretilir. Her kelime "üret ve doğrula" ile kabul edildi�
 
 Tasarım ve gerekçeler: `Türkçe Morfolojik Tokenizer — Tasarım ve Araştırma.md`.
 
+*Lossless Turkish morphological tokenizer: suffixes are stored as archiphonemic ids
+and surface forms are regenerated on decode, so `decode(encode(x)) == x` always holds.
+Rust runtime, Python API, Apache-2.0.*
+
+## Kurulum ve kullanım
+
+```bash
+pip install turkmorph
+```
+
+```python
+from turkmorph.fast import fast_tokenizer
+
+tok = fast_tokenizer()                       # Rust çalışma zamanı, tablolar pakette
+tok.encode("Öğretmenlerimizden NATO'ya zeytinyağları")
+# ['<cap>', 'R:öğretmen#N', 'S:PL', 'S:P1PL', 'S:ABL', '<capsb>', 'R:nato#PROPER',
+#  '<apos>', 'S:DAT', 'R:zeytinyağı#N', 'S:PL|P3PL']
+ids = tok.encode_ids(metin)                  # model için tamsayı ID'ler (sözlük: 58.723)
+assert tok.decode_ids(ids) == metin          # kayıpsız
+tok.encode_batch(metinler, threads=6)        # çok iş parçacıklı, GIL serbest
+```
+
+Saf Python sürümü aynı tokenları üretir: `from turkmorph.presets import full_tokenizer`.
+Paketler Linux (x86_64, aarch64), macOS (Intel, Apple Silicon) ve Windows (x64) için
+Python ≥ 3.10 ile hazır gelir; diğer platformlarda pip kaynak koddan derler (Rust gerekir).
+
+## Dil modeli karşılaştırması: Morph vs BPE
+
+Aynı GPT (6 katman, 384 boyut, 33M parametre), aynı sözlük boyutu (58.723) ve aynı
+BellaTurca metni; BPE aynı metinle eğitilmiş byte-level BPE. Değerler karakter başına
+bit (BPC, düşük daha iyi), eğitimde hiç kullanılmamış test metninde; aksi belirtilmedikçe
+3 seed ortalaması (seed sapması 0,002–0,007).
+
+| Karşılaştırma | Morph | BPE | Morph avantajı |
+|---|---:|---:|---:|
+| Eşit metin, 30M karakter | 2,015 | 2,412 | %16,4 |
+| Eşit hesaplama (BPE'ye 1,77× metin, aynı token sayısı) | 2,015 | 2,395 | %15,8 |
+| Eşit metin, BPE en iyi öğrenme oranı/batch ile (tek seed) | 2,015 | 2,363 | %14,7 |
+| Uzun bağlam (~2.800 karakterlik parçalar) | 2,076 | 2,421 | %14,2 |
+| Eşit metin, 100M karakter (tek seed) | 1,887 | 2,308 | %18,2 |
+
+Sınırlar: tek model boyutu, tek derlem, en fazla 100M karakter. Morph aynı metin için
+yaklaşık 1,8 kat token üretir; çıkarım maliyeti buna göre yüksektir. Deney kodu `lm/`,
+protokol ayrıntıları aşağıda.
+
 ```
 bash scripts/build_all.sh            # UD + Zemberek indir ve her şeyi kur
 python3 scripts/prepare_bellaturca.py   # BellaTurca örneği (data/raw/bellaturca/*.jsonl) -> sayımlar (~2 dk)
@@ -24,11 +69,16 @@ python3 -m venv --system-site-packages .venv-tt && .venv-tt/bin/pip install turk
 Çalışma zamanı bağımlılığı yok (Python ≥ 3.10 standart kütüphanesi). `TURKMORPH_PROCS`
 paralel işçi sayısını belirler (varsayılan: `rebuild.sh` 6, betikler tüm çekirdekler).
 
-Rust/PyO3 çalışma zamanı `bash scripts/build_fast.sh` ile derlenir; Python arayüzü
-`from turkmorph.fast import fast_tokenizer` şeklindedir. Dağıtım wheel'i Python
-modüllerini ve Rust uzantısını içerir; tam model verileri ayrıca hazırlanmalıdır.
-Paket proje dışına kurulursa veri yolunu `fast_tokenizer(data_dir="/model/verileri")`
-veya `full_tokenizer(data_dir="/model/verileri")` ile açıkça belirtin.
+Kaynak koddan çalışırken Rust/PyO3 çalışma zamanı `bash scripts/build_fast.sh` ile
+derlenir ve tablolar depodaki `data/` klasöründen okunur. Dağıtım paketi
+`bash scripts/build_wheel.sh` ile `dist/` altına üretilir: tablolar `turkmorph/data/`
+içine kopyalanıp wheel'e eklenir. Başka bir tablo kümesi için
+`fast_tokenizer(data_dir=...)` veya `full_tokenizer(data_dir=...)` kullanılabilir.
+Yayın: `v*` etiketi GitHub Actions ile tüm platformlar için wheel üretip PyPI'ye yükler
+(`.github/workflows/release.yml`).
+
+Lisans: kod Apache 2.0. Tablolar Zemberek (Apache 2.0), UD Türkçe ağaç bankaları
+(CC BY-SA 4.0; IMST: CC BY-NC-SA 3.0) ve BellaTurca'dan türetilmiştir; bkz. `NOTICE`.
 
 İlk GPT eğitim pilotu, hazır `data/lm/morph/` verisiyle GPU'nun erişilebilir olduğu
 terminalden `bash scripts/start_lm.sh` komutuyla başlatılır. Betik CUDA ileri/geri

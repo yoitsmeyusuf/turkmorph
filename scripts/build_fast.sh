@@ -5,8 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 export PATH="$HOME/.cargo/bin:$PATH"
 python3 -m turkmorph.export
-(cd rust && python3 -m maturin build --release -o ../build/wheels)
-whl=$(ls -t build/wheels/turkmorph_fast-*.whl | head -1)
+python3 -m maturin build --release -o build/wheels
+whl=$(ls -t build/wheels/turkmorph-*.whl | head -1)
 python3 - "$whl" <<'PY'
 import sys, zipfile
 z = zipfile.ZipFile(sys.argv[1])

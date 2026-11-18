@@ -3,7 +3,7 @@
 demo_tokenizer(): hand lexicon (~130 roots), hand costs, toy LEX BPE. Fast; used
                   by the unit tests and demo.py.
 full_tokenizer(): Zemberek-derived lexicon + EM costs + LEX BPE + language id,
-                  built by scripts/build_all.sh into data/.
+                  built by scripts/build_all.sh into data/ (shipped in the wheel).
 """
 from __future__ import annotations
 
@@ -11,8 +11,9 @@ from pathlib import Path
 
 from .bpe import LexBPE
 from .tokenizer import TurkMorphTokenizer
+from ._paths import default_data_dir
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = default_data_dir()
 
 # LEX BPE training data: suffix-STRIPPED stems + foreign words (never inflected TR words).
 LEX_TRAIN = """

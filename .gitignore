@@ -35,3 +35,6 @@ data_v3/
 
 # Old prototype archive
 turkmorph_prototype.zip
+turkmorph/data/
+dist/
+.vscode/

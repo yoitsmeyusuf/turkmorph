@@ -1,5 +1,6 @@
 """The Rust runtime: same tokens as TurkMorphTokenizer (full preset, deterministic
-mode), bit for bit, ~100x faster. Build it with `bash scripts/build_fast.sh`.
+mode), bit for bit, ~100x faster. Included in the wheel; in a checkout build it
+with `bash scripts/build_fast.sh`.
 
     from turkmorph.fast import fast_tokenizer
     tok = fast_tokenizer()
@@ -14,8 +15,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from ._fast import FastTokenizer
+from ._paths import default_data_dir
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = default_data_dir()
 
 
 class _Vocab:

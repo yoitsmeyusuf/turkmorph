@@ -1,18 +1,41 @@
 [build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
+requires = ["maturin>=1.5,<2"]
+build-backend = "maturin"
 
 [project]
 name = "turkmorph"
 version = "0.2.0"
-description = "Lossless Turkish morphological tokenizer with archiphonemic suffix ids"
+description = "Lossless Turkish morphological tokenizer with a fast Rust runtime"
+readme = "README.md"
 requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Muhammet Yusuf Kaydin" }]
+keywords = ["turkish", "tokenizer", "morphology", "nlp", "language-model"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: Turkish",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Text Processing :: Linguistic",
+    "Intended Audience :: Science/Research",
+]
+
+[project.urls]
+Repository = "https://github.com/yoitsmeyusuf/turkmorph"
 
 [project.optional-dependencies]
 test = ["pytest"]
+context = ["torch"]
 
-[tool.setuptools]
-packages = ["turkmorph"]
+[tool.maturin]
+manifest-path = "rust/Cargo.toml"
+features = ["python"]
+module-name = "turkmorph._fast"
+include = [
+    { path = "turkmorph/data/*", format = ["sdist", "wheel"] },
+    { path = "LICENSE", format = "sdist" },
+    { path = "NOTICE", format = "sdist" },
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
