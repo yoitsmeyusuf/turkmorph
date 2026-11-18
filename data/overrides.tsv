@@ -1,18 +1,18 @@
 # word	root key	suffix chain	source
+abim	ab#PROPER	P1SG	ud
 aklandı	akla#V	PASS PAST	ud
 akça	ak#N	EQU	ud
 alacakları	alacak#N	P3PL	ud
 alacaklarının	alacak#N	P3PL GEN	ud
 alacağımı	alacak#N	P1SG ACC	ud
 alacağına	alacak#N	P3SG DAT	ud
-algılar	algı#N	PL	ud
 alkışlar	alkış#N	PL	ud
 altına	alt#N	P3SG DAT	ud
 altından	alt#N	P3SG ABL	ud
 altını	alt#N	P3SG ACC	ud
 anlatınız	anla#V	CAUS IMP2PLF	ud
+anlaşılıyordu	anla#V	RECP PASS PROG PCOP	ud
 araştırmanın	araştır#V	VN GEN	ud
-asma	as#V	VN	ud
 astım	as#V	PAST K1SG	ud
 asıldı	as#V	PASS PAST	ud
 asılıdır	ası#N	LH COP3	ud
@@ -26,7 +26,7 @@ ayrıcalıklı	ayrı#N	EQU LHK LH	rare
 ayrıcalığı	ayrı#N	EQU LHK P3SG	rare
 ayrılabilir	ayır#V	PASS ABIL AOR	ud
 ayrılışıp	ayrıl#V	RECP CV_IP	ud
-ayınınki	ayı#N	GEN REL	ud
+ayırt	ayır#V	CAUS	ud
 açıklamada	açıkla#V	VN LOC	ud
 açıklamalar	açıkla#V	VN PL	ud
 açıklamalarda	açıkla#V	VN PL LOC	ud
@@ -35,7 +35,6 @@ açıklamasının	açıkla#V	VN P3SG GEN	ud
 açıklamaya	açıkla#V	VN DAT	ud
 aşkın	aşk#N	GEN	ud
 basınca	bas#V	CV_INCA	ud
-bazında	baz#N	P3SG LOC	ud
 bağlanmış	bağ#N	LAN EVID	ud
 bağışlar	bağışla#V	AOR	ud
 başkası	başka#N	P3SG	ud
@@ -43,23 +42,22 @@ başkasının	başka#N	P3SG GEN	ud
 başla	baş#N	INS	ud
 beklenmediğini	bekle#V	PASS NEG PART_DHK P3SG ACC	ud
 benzemez	benze#V	NEG AOR	ud
+bilemiyorum	bile#V	NEG PROG Z1SG	ud
 bilinmeyen	bil#V	PASS NEG PART_AN	ud
+biliyordum	bile#V	PROG PCOP K1SG	ud
 birinde	biri#PRON	LOC	ud
 birkaçının	birkaçı#PRON	GEN	ud
 birçoğunu	birçoğu#PRON	ACC	ud
-birçoğunun	birçoğu#PRON	GEN	ud
 bizimkiler	biz#PRON	GEN REL PL	ud
 boyunda	boy#N	P3SG LOC	ud
-boyundaki	boy#N	P3SG LOC REL	ud
 bozulan	boz#V	PASS PART_AN	ud
 bozulması	boz#V	PASS VN P3SG	ud
 bozulmaya	boz#V	PASS VN DAT	ud
 bozulmuştu	boz#V	PASS EVID PCOP	ud
-bozulur	boz#V	PASS AOR	ud
-bozuluyor	boz#V	PASS PROG	ud
 bulunamadı	bul#V	PASS IMPOT PAST	ud
 bulunmadan	bul#V	PASS CV_MADAN	ud
 bulunmaktan	bul#V	PASS INF ABL	ud
+bulunmaması	bul#V	PASS NEG VN P3SG	ud
 bulunmasına	bul#V	PASS VN P3SG DAT	ud
 bulunmaz	bul#V	PASS NEG AOR	ud
 bulunuyoruz	bul#V	PASS PROG Z1PL	ud
@@ -69,18 +67,16 @@ bölmeyle	böl#V	VN INS	ud
 bürünmüş	bürü#V	PASS EVID	ud
 canlandı	can#N	LAN PAST	ud
 canlandırmak	can#N	LAN CAUS INF	ud
-cezalandırılması	ceza#N	LAN CAUS PASS VN P3SG	ud
 cicim	cici#N	P1SG	ud
 dama	dam#N	DAT	ud
-delice	de#PROPER	LH EQU	ud
 demirin	demiri#N	P2SG	ud
 denemeden	dene#V	CV_MADAN	ud
 deniyor	dene#V	PROG	ud
+derdi	dert#N	P3SG	ud
 değerlendiren	değer#N	LAN CAUS PART_AN	ud
 değerlendirildiği	değer#N	LAN CAUS PASS PART_DHK P3SG	ud
 değerlendirileceğini	değer#N	LAN CAUS PASS FUT P2SG ACC	ud
 değerlendirilmek	değer#N	LAN CAUS PASS INF	ud
-değişmez	değiş#V	NEG AOR	ud
 dilimin	dil#N	P1SG GEN	ud
 diyeyim	de#V	OPT Z1SG	ud
 dizimi	dizim#N	P3SG	ud
@@ -93,7 +89,6 @@ donar	dona#V	AOR	ud
 doya	doy#V	OPT	ud
 doğanlar	doğ#V	PART_AN PL	ud
 doğanların	doğ#V	PART_AN PL GEN	ud
-doğuştan	doğ#V	VN_HS ABL	ud
 duyar	duy#V	AOR	ud
 duyarlar	duy#V	AOR Z3PL	ud
 duyarlık	duy#V	AOR LHK	ud
@@ -105,7 +100,6 @@ dördünü	dördün#N	P3SG	ud
 döşeme	döşe#V	VN	ud
 düze	düz#N	DAT	ud
 düzenlenmesini	düzen#N	LAN VN P3SG ACC	ud
-düşünürken	düşünür#N	KEN	ud
 düşünürler	düşünür#N	PL	ud
 efendim	efendi#N	P1SG	ud
 ehli	ehil#N	P3SG	ud
@@ -115,6 +109,7 @@ elimdeki	el#N	P1SG LOC REL	ud
 elimden	el#N	P1SG ABL	ud
 elime	el#N	P1SG DAT	ud
 elimi	el#N	P1SG ACC	ud
+elimle	el#N	P1SG INS	ud
 emelim	emel#N	P1SG	ud
 endişelendirmişti	endişe#N	LAN CAUS EVID PCOP	ud
 esen	es#V	PART_AN	ud
@@ -124,6 +119,7 @@ eğildi	eğ#V	PASS PAST	ud
 eğilin	eğ#V	PASS IMP2PL	ud
 eğilip	eğ#V	PASS CV_IP	ud
 eğilir	eğ#V	PASS AOR	ud
+eğilmiş	eğ#V	PASS EVID	ud
 fesi	fes#N	P3SG	ud
 gelecek	gel#V	FUT	ud
 gelecekler	gel#V	FUT Z3PL	ud
@@ -131,6 +127,7 @@ geleceklerdir	gel#V	FUT Z3PL COP3	ud
 gelene	gel#V	PART_AN DAT	ud
 geleni	gel#V	PART_AN ACC	ud
 gelenin	gel#V	PART_AN GEN	ud
+gelenleri	gelen#N	P3PL	ud
 gelenlerin	gelen#N	PL GEN	ud
 gelirim	gelir#N	P1SG	ud
 gelişimde	gel#V	VN_HS P1SG LOC	ud
@@ -138,17 +135,16 @@ gence	gen#N	EQU	ud
 genci	gen#N	CH	ud
 geçenlerin	geç#V	PART_AN PL GEN	ud
 geçmişlerdir	geç#V	EVID Z3PL COP3	ud
-giderdik	git#V	AOR PCOP K1PL	ud
+giderken	gider#N	KEN	ud
 giderler	gider#N	PL	ud
 giderlermiş	gider#N	PL ECOP	ud
-gidermiş	git#V	AOR ECOP	ud
-gömüle	göm#V	PASS OPT	ud
 gömülen	gömüle#V	PASS	ud
 görevlendirilen	görev#N	LAN CAUS PASS PART_AN	ud
 görmez	gör#V	NEG AOR	ud
 görünmez	görün#V	NEG AOR	ud
 görüşmemiz	görüş#V	VN P1PL	ud
 görüşmeyi	görüşme#N	ACC	ud
+gülüşerek	gül#V	RECP CV_ARAK	ud
 güme	güm#N	DAT	ud
 gündüzleri	gündüz#N	P3PL	ud
 güveyi	güvey#N	P3SG	ud
@@ -156,7 +152,6 @@ güzelim	güzel#PROPER	P1SG	ud
 haftaki	haf#N	LOC REL	ud
 hale	hal#N	DAT	ud
 halka	halk#N	DAT	ud
-havanda	havan#N	LOC	ud
 hazırlanmış	hazır#N	LAN EVID	ud
 hisseden	hisse#N	ABL	ud
 hissi	his#N	P3SG	ud
@@ -171,18 +166,12 @@ inim	ini#N	P1SG	ud
 ister	iste#V	AOR	ud
 itin	iti#N	P2SG	ud
 izinden	iz#N	P3SG ABL	ud
-içersin	iç#V	AOR Z2SG	ud
-içim	iç#N	P1SG	ud
-içimden	iç#N	P1SG ABL	ud
 kabine	kabin#N	DAT	ud
 kafesi	kafes#N	P3SG	ud
 kakmalı	kak#V	NECES	ud
-kalbim	kalbi#N	P1SG	ud
 kanıtlar	kanıt#N	PL	ud
 kapanma	kapa#V	PASS VN	ud
-kapanır	kapa#V	PASS AOR	ud
 kaplar	kapla#V	AOR	ud
-kapıldığım	kap#V	PASS PART_DHK P1SG	ud
 kapılmış	kap#V	PASS EVID	ud
 karaca	kara#N	EQU	ud
 karman	karma#N	P2SG	ud
@@ -200,7 +189,6 @@ katılmamış	kat#V	PASS NEG EVID	ud
 katılmasını	kat#V	PASS VN P3SG ACC	ud
 katılmıştı	kat#V	PASS EVID PCOP	ud
 kaynar	kayna#V	AOR	ud
-kazanın	kaza#N	GEN	ud
 kaçının	kaçın#V	IMP2PL	ud
 kaçıştı	kaç#V	RECP PAST	ud
 kelebekler	kelebek#N	PL	ud
@@ -220,17 +208,13 @@ masalı	masal#N	P3SG	ud
 neler	ne#PRON	PL	ud
 nelerdir	ne#PRON	PL COP3	ud
 neleri	ne#PRON	PL ACC	ud
-onar	on#N	DIST	ud
-onaylar	onay#N	PL	ud
 oranın	oran#N	GEN	ud
-orda	ora#N	LOC_C	ud
 pahalı	paha#N	LH	rare
 pahalıdır	paha#N	LH COP3	rare
 paldır	pal#N	COP3	ud
 perdelenmiş	perde#N	LAN EVID	ud
 peşinden	peş#N	P3SG ABL	ud
 peşine	peş#N	P3SG DAT	ud
-peşini	peş#N	P3SG ACC	ud
 pisti	pis#N	PCOP	ud
 puanlarım	puanla#V	AOR Z1SG	ud
 salına	salın#V	OPT	ud
@@ -242,21 +226,20 @@ sayılan	sayıla#V	PASS	ud
 sayımı	sayım#N	P3SG	ud
 saçmasını	saç#V	VN P3SG ACC	ud
 sağlama	sağlam#PROPER	DAT	ud
-sendin	sen#PRON	PCOP K2SG	ud
 serdi	ser#V	PAST	ud
 seçildi	seç#V	PASS PAST	ud
 seçilerek	seç#V	PASS CV_ARAK	ud
 seçiliyordu	seç#V	PASS PROG PCOP	ud
 seçilmesi	seç#V	PASS VN P3SG	ud
 sisi	sis#N	P3SG	ud
-sorunca	sor#V	CV_INCA	ud
 söküldü	sök#V	PASS PAST	ud
 sürüne	sürün#V	OPT	ud
+sürüyordu	sürü#V	PROG PCOP	ud
 süslenmiş	süs#N	LAN EVID	ud
 sıkılır	sık#V	PASS AOR	ud
+tadıma	tat#N	P1SG DAT	ud
 tası	tas#N	P3SG	ud
 taşırsın	taş#V	CAUS IMP3SG	ud
-teması	temas#N	P3SG	ud
 temizler	temizle#V	AOR	ud
 toplar	topla#V	AOR	ud
 trende	trend#N	DAT	ud
@@ -269,7 +252,7 @@ tıkarlar	tık#V	AOR Z3PL	ud
 unutulmaz	unut#V	PASS NEG AOR	ud
 uyanmışım	uy#V	PART_AN ECOP Z1SG	ud
 uyuma	uyu#V	VN	ud
-uzanıyor	uza#V	PASS PROG	ud
+uyurken	uyur#N	KEN	ud
 uğrun	uğru#N	P2SG	ud
 uğruna	uğru#N	P2SG DAT	ud
 vazgeçilmez	vazgeç#V	PASS NEG AOR	ud
@@ -282,12 +265,12 @@ yardan	yarda#N	P2SG	ud
 yargıcın	yargı#N	CH P2SG	ud
 yarının	yarın#N	GEN	ud
 yavaşlardı	yavaş#PROPER	PL PCOP	ud
-yayılıp	yay#V	PASS CV_IP	ud
 yayınlar	yayın#N	PL	ud
 yazarken	yazar#N	KEN	ud
 yazarım	yazar#N	P1SG	ud
 yazmayı	yazma#N	ACC	ud
 yazımı	yaz#N	P1SG ACC	ud
+yaşlandıkça	yaş#N	LAN CV_DIKCE	ud
 yediler	ye#V	PAST K3PL	ud
 yengenim	yenge#N	P2SG Z1SG	ud
 yerim	ye#V	AOR Z1SG	ud
@@ -295,14 +278,12 @@ yerine	yer#N	P3SG DAT	ud
 yerken	yer#N	KEN	ud
 yeter	yet#V	AOR	ud
 yüzde	yüz#N.1	LOC	ud
-yıkanıp	yıka#V	PASS CV_IP	ud
 yıkıyor	yıka#V	PROG	ud
 çekerken	çeker#N	KEN	ud
 çekilmek	çek#V	PASS INF	ud
 çekmeceye	çek#V	VN_MACA DAT	ud
 çevirmesini	çevirme#N	P3SG ACC	ud
 çizmeler	çizme#N	PL	ud
-çizmeleri	çizme#N	P3PL	ud
 çizmelerinin	çizme#N	P3PL GEN	ud
 çoğumuz	çoğu#PRON	P1PL	ud
 çoğumuzun	çoğu#PRON	P1PL GEN	ud
@@ -314,11 +295,9 @@ yıkıyor	yıka#V	PROG	ud
 çıkarmasıyla	çıkarma#N	P3SG INS	ud
 özetle	özet#N	INS	ud
 üste	üst#N	DAT	ud
-üzgünüz	üzgün#N	Z1PL	rare
 üzüldüm	üz#V	PASS PAST K1SG	ud
 üzüldüğünü	üz#V	PASS PART_DHK P3SG ACC	ud
 üzülen	üz#V	PASS PART_AN	ud
 üzülmüştü	üz#V	PASS EVID PCOP	ud
 üzülüyor	üz#V	PASS PROG	ud
-üzülüyorsun	üz#V	PASS PROG Z2SG	ud
 üzülüyorum	üz#V	PASS PROG Z1SG	ud

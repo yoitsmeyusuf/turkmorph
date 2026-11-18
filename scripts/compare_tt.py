@@ -103,7 +103,7 @@ def word_lossless(tok, w):
 def main():
     rng = random.Random(7)
     tms, tts = TM(), TT()
-    ud = [s for f in ud_files(DATA / "raw" / "ud", "test") for s in read_conllu(f)]
+    ud = [s for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True) for s in read_conllu(f)]
     ud_texts = [s.text for s in ud if s.text]
     bt_texts = [l.rstrip("\n") for l in open(DATA / "corpus" / "valid.txt", encoding="utf-8")]
     rng.shuffle(bt_texts)

@@ -9,7 +9,7 @@ Tasarım ve gerekçeler: `Türkçe Morfolojik Tokenizer — Tasarım ve Araştı
 
 *Lossless Turkish morphological tokenizer: suffixes are stored as archiphonemic ids
 and surface forms are regenerated on decode, so `decode(encode(x)) == x` always holds.
-Rust runtime, Python API, Apache-2.0.*
+Rust runtime, Python API. Code Apache-2.0, tables CC BY-SA 4.0 (see NOTICE).*
 
 ## Kurulum ve kullanım
 
@@ -24,7 +24,7 @@ tok = fast_tokenizer()                       # Rust çalışma zamanı, tablolar
 tok.encode("Öğretmenlerimizden NATO'ya zeytinyağları")
 # ['<cap>', 'R:öğretmen#N', 'S:PL', 'S:P1PL', 'S:ABL', '<capsb>', 'R:nato#PROPER',
 #  '<apos>', 'S:DAT', 'R:zeytinyağı#N', 'S:PL|P3PL']
-ids = tok.encode_ids(metin)                  # model için tamsayı ID'ler (sözlük: 58.723)
+ids = tok.encode_ids(metin)                  # model için tamsayı ID'ler (sözlük: 58.667)
 assert tok.decode_ids(ids) == metin          # kayıpsız
 tok.encode_batch(metinler, threads=6)        # çok iş parçacıklı, GIL serbest
 ```
@@ -35,7 +35,7 @@ Python ≥ 3.10 ile hazır gelir; diğer platformlarda pip kaynak koddan derler 
 
 ## Dil modeli karşılaştırması: Morph vs BPE
 
-Aynı GPT (6 katman, 384 boyut, 33M parametre), aynı sözlük boyutu (58.723) ve aynı
+Aynı GPT (6 katman, 384 boyut, 33M parametre), aynı sözlük boyutu ve aynı
 BellaTurca metni; BPE aynı metinle eğitilmiş byte-level BPE. Değerler karakter başına
 bit (BPC, düşük daha iyi), eğitimde hiç kullanılmamış test metninde; aksi belirtilmedikçe
 3 seed ortalaması (seed sapması 0,002–0,007).
@@ -48,6 +48,8 @@ bit (BPC, düşük daha iyi), eğitimde hiç kullanılmamış test metninde; aks
 | Uzun bağlam (~2.800 karakterlik parçalar) | 2,076 | 2,421 | %14,2 |
 | Eşit metin, 100M karakter (tek seed) | 1,887 | 2,308 | %18,2 |
 
+Bu ölçümler IMST'nin henüz çıkarılmadığı önceki tablolarla (sözlük 58.723) yapıldı;
+IMST'siz tablolarda UD test kök doğruluğu %93,94 → %93,91 değişti.
 Sınırlar: tek model boyutu, tek derlem, en fazla 100M karakter. Morph aynı metin için
 yaklaşık 1,8 kat token üretir; çıkarım maliyeti buna göre yüksektir. Deney kodu `lm/`,
 protokol ayrıntıları aşağıda.
@@ -77,8 +79,11 @@ içine kopyalanıp wheel'e eklenir. Başka bir tablo kümesi için
 Yayın: `v*` etiketi GitHub Actions ile tüm platformlar için wheel üretip PyPI'ye yükler
 (`.github/workflows/release.yml`).
 
-Lisans: kod Apache 2.0. Tablolar Zemberek (Apache 2.0), UD Türkçe ağaç bankaları
-(CC BY-SA 4.0; IMST: CC BY-NC-SA 3.0) ve BellaTurca'dan türetilmiştir; bkz. `NOTICE`.
+Lisans: kod Apache 2.0. Tablolar (`data/`, pakette `turkmorph/data/`) CC BY-SA 4.0:
+Zemberek (Apache 2.0), UD Türkçe ağaç bankaları BOUN/Kenet/Penn/Tourism/FrameNet ve
+BellaTurca (CC BY-SA 4.0) verisinden öğrenilir. Ticari kullanımı kısıtlayan IMST
+(CC BY-NC-SA) hiçbir tabloya girmez, yalnızca yerel değerlendirmede test kümesi
+olarak kullanılır. Ayrıntılar `NOTICE` dosyasında.
 
 İlk GPT eğitim pilotu, hazır `data/lm/morph/` verisiyle GPU'nun erişilebilir olduğu
 terminalden `bash scripts/start_lm.sh` komutuyla başlatılır. Betik CUDA ileri/geri

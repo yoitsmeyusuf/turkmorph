@@ -54,5 +54,13 @@ def read_conllu(path) -> list[Sentence]:
     return out
 
 
-def ud_files(root, split: str):
-    return sorted(Path(root).glob(f"*-ud-{split}.conllu"))
+# Treebanks under non-commercial licenses (CC BY-NC-SA). Nothing that ships in data/
+# is learned from them; evaluation scripts may still score on their test splits.
+NONCOMMERCIAL_TREEBANKS = frozenset({"tr_imst", "it_isdt"})
+
+
+def ud_files(root, split: str, include_noncommercial: bool = False):
+    files = sorted(Path(root).glob(f"*-ud-{split}.conllu"))
+    if include_noncommercial:
+        return files
+    return [f for f in files if f.name.split("-ud-")[0] not in NONCOMMERCIAL_TREEBANKS]

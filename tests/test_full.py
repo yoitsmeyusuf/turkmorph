@@ -28,7 +28,7 @@ def full(request):
 def _ud_test_texts(n_per_file=150):
     from turkmorph.corpus import read_conllu, ud_files
     out = []
-    for f in ud_files(DATA / "raw" / "ud", "test"):
+    for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True):
         out += [s.text for s in read_conllu(f)[:n_per_file] if s.text]
     return out
 
@@ -60,7 +60,7 @@ def test_fuzz_roundtrip(full):
     ("için", "R:için#Q"),
     ("içindir", "R:için#Q S:COP3"),
     ("kendini", "R:kendi#PRON S:ACC"),
-    ("birbirlerine", "R:birbiri#PRON S:PL S:DAT|P2SG+DAT"),     # P2SG reading left open (A)
+    ("birbirlerine", "R:birbiri#PRON S:PL S:DAT"),     # P2SG reading no longer near-equal (no DAT|P2SG+DAT union)
     ("ikinci", "R:iki#N S:ORD"),
     ("Beyoğlu'nda", "<cap> R:beyoğlu#PROPER <apos> S:LOC"),
     ("cocuklarimiz", "<ascii> R:çocuk#N S:PL S:P1PL"),

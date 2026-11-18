@@ -3,20 +3,28 @@ Copyright 2026 Muhammet Yusuf Kaydin
 
 The source code is licensed under the Apache License, Version 2.0 (see LICENSE).
 
-The runtime tables shipped in data/ (and in turkmorph/data/ inside the wheel)
-are derived from the third-party resources below; each keeps its own license.
+The runtime tables in data/ (shipped as turkmorph/data/ inside the wheel) are
+learned from the resources below. Because several are CC BY-SA 4.0, the tables
+are distributed under the Creative Commons Attribution-ShareAlike 4.0
+International license (https://creativecommons.org/licenses/by-sa/4.0/).
+No non-commercial (NC) resource is used to build them.
 
   * Zemberek-NLP dictionaries (lexicon.tsv, proper_words.txt)
     https://github.com/ahmetaa/zemberek-nlp
     Apache License 2.0, Copyright 2018 Ahmet A. Akın, Mehmet D. Akın
-    (data/raw/zemberek-LICENSE)
 
-  * Universal Dependencies Turkish treebanks (analysis costs, overrides,
-    underspecified suffix tokens; lexicon additions)
+  * Universal Dependencies Turkish treebanks, train/dev splits (lexicon additions,
+    analysis costs, overrides, underspecified suffix ids, language-id calibration)
+    UD_Turkish-BOUN, -Kenet, -Penn, -Tourism, -FrameNet: CC BY-SA 4.0
     https://universaldependencies.org/
-      UD_Turkish-BOUN, -Kenet, -Penn, -Tourism, -FrameNet: CC BY-SA 4.0
-      UD_Turkish-IMST: CC BY-NC-SA 3.0
+    UD_Turkish-IMST (CC BY-NC-SA 3.0) is NOT used for any table; its test split
+    is only scored during local evaluation.
 
-  * BellaTurca corpus sample (word frequencies, language-id and LEX BPE
-    statistics: wordfreq.tsv, langid.json, lex_bpe.json, attested_stems.txt)
+  * Universal Dependencies foreign-language treebanks, train splits (langid.json)
+    UD_English-EWT, UD_German-GSD, UD_Spanish-GSD, UD_French-GSD,
+    UD_Italian-TWITTIRO: CC BY-SA 4.0; UD_Italian-MarkIT: CC BY 4.0
+
+  * BellaTurca corpus sample (wordfreq.tsv, langid.json, lex_bpe.json,
+    attested_stems.txt, analysis costs, underspecified suffix ids)
     https://huggingface.co/datasets/turkish-nlp-suite/BellaTurca
+    CC BY-SA 4.0

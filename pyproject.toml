@@ -8,7 +8,7 @@ version = "0.2.0"
 description = "Lossless Turkish morphological tokenizer with a fast Rust runtime"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0" }
+license = { text = "Apache-2.0 (code); CC-BY-SA-4.0 (data tables)" }
 authors = [{ name = "Muhammet Yusuf Kaydin" }]
 keywords = ["turkish", "tokenizer", "morphology", "nlp", "language-model"]
 classifiers = [

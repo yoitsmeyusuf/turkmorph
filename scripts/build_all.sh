@@ -17,7 +17,9 @@ for tb in boun:BOUN imst:IMST kenet:Kenet penn:Penn tourism:Tourism framenet:Fra
     [ -s $f ] || curl -sSfLo $f $U/UD_Turkish-$name/master/tr_$code-ud-$sp.conllu
   done
 done
-for tb in en_ewt:English-EWT es_gsd:Spanish-GSD de_gsd:German-GSD fr_gsd:French-GSD it_isdt:Italian-ISDT; do
+# IMST (CC BY-NC-SA) is downloaded for evaluation only; turkmorph.corpus.ud_files keeps it out of every build.
+# Italian: TWITTIRO (CC BY-SA 4.0) + MarkIT (CC BY 4.0) instead of ISDT (CC BY-NC-SA 3.0).
+for tb in en_ewt:English-EWT es_gsd:Spanish-GSD de_gsd:German-GSD fr_gsd:French-GSD it_twittiro:Italian-TWITTIRO it_markit:Italian-MarkIT; do
   code=${tb%%:*}; name=${tb##*:}
   for sp in train test; do
     f=$RAW/ud_foreign/$code-ud-$sp.conllu

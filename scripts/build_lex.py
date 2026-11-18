@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from train_em import bt_words, cached_analyses, ud_items       # noqa: E402
 from turkmorph.bpe import LexBPE                               # noqa: E402
-from turkmorph.corpus import read_conllu                       # noqa: E402
+from turkmorph.corpus import read_conllu, ud_files             # noqa: E402
 from turkmorph.langid import CharNgramLangId                   # noqa: E402
 from turkmorph.morphology import Lexicon, analyze_guess        # noqa: E402
 from turkmorph.tokenizer import tr_lower                       # noqa: E402
@@ -37,7 +37,7 @@ NUM_MERGES = 16000
 
 def foreign_types(split):
     c = Counter()
-    for f in sorted((RAW / "ud_foreign").glob(f"*-ud-{split}.conllu")):
+    for f in ud_files(RAW / "ud_foreign", split, include_noncommercial=split == "test"):
         for s in read_conllu(f):
             for t in s.tokens:
                 if WORD.match(t.form):

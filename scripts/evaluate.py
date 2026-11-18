@@ -25,7 +25,7 @@ WORD = re.compile(r"^[^\W\d_]+$")
 
 def test_items():
     c = Counter()
-    for f in ud_files(DATA / "raw" / "ud", "test"):
+    for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True):
         for s in read_conllu(f):
             for t in s.tokens:
                 if WORD.match(t.form):
@@ -87,7 +87,7 @@ def _encode(text):
 
 
 def tokenizer_scores():
-    texts = [s.text for f in ud_files(DATA / "raw" / "ud", "test") for s in read_conllu(f) if s.text]
+    texts = [s.text for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True) for s in read_conllu(f) if s.text]
     from turkmorph.em import n_procs
     with Pool(n_procs(), initializer=_init) as pool:
         res = pool.map(_encode, texts, chunksize=32)
@@ -115,7 +115,7 @@ def baseline_bpe(vocab_size):
     base = LexBPE()
     budget = vocab_size - 256 - len(base.vocab)
     bpe = LexBPE().train(words, num_merges=max(budget, 0), min_count=2)
-    texts = [s.text for f in ud_files(DATA / "raw" / "ud", "test") for s in read_conllu(f) if s.text]
+    texts = [s.text for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True) for s in read_conllu(f) if s.text]
     n_tok = n_words = 0
     for t in texts:
         n_words += len(re.findall(r"\S+", t))

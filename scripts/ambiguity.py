@@ -26,7 +26,7 @@ def pieces(root, chain):
 def main():
     lex = Lexicon.from_tsv(DATA / "lexicon.tsv")
     costs = LearnedCosts.from_json(DATA / "costs.json", len(lex))
-    toks = [t for f in ud_files(DATA / "raw" / "ud", "test") for s in read_conllu(f)
+    toks = [t for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True) for s in read_conllu(f)
             for t in s.tokens if WORD.match(t.form)]
     an = cached_analyses({tr_lower(t.form) for t in toks}, lex, "test")
     kind = Counter()

@@ -127,7 +127,7 @@ def checks_for(t, f, chain):
 def main():
     tok = full_tokenizer()
     lex = tok.lex
-    sents = [s for f in ud_files(DATA / "raw" / "ud", "test") for s in read_conllu(f)]
+    sents = [s for f in ud_files(DATA / "raw" / "ud", "test", include_noncommercial=True) for s in read_conllu(f)]
     toks = [t for s in sents for t in s.tokens if WORD.match(t.form)]
     forced = {}                                       # id(token) -> encoding chosen in context
     if "--context" in sys.argv:                       # (B): analyses picked by reading the sentence
