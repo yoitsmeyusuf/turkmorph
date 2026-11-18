@@ -35,6 +35,8 @@ def _ud_test_texts(n_per_file=150):
 
 def test_roundtrip_ud_test_sentences(full):
     texts = _ud_test_texts()
+    if not texts:
+        pytest.skip("UD treebanks not downloaded (data/raw/ud; scripts/build_all.sh)")
     assert len(texts) > 500
     for t in texts:
         assert full.decode(full.encode(t)) == t, t
