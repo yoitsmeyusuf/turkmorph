@@ -1,0 +1,1591 @@
+{
+ "suffixes": [
+  {
+   "id": "PL",
+   "tmpl": "lAr",
+   "nxt": "N_PL",
+   "n_tmpl": "nlAr",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "P1SG",
+   "tmpl": "(H)m",
+   "nxt": "N_POSS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "P2SG",
+   "tmpl": "(H)n",
+   "nxt": "N_POSS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "P3SG",
+   "tmpl": "(s)H",
+   "nxt": "N_POSS3",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "P1PL",
+   "tmpl": "(H)mHz",
+   "nxt": "N_POSS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "P2PL",
+   "tmpl": "(H)nHz",
+   "nxt": "N_POSS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "P3PL",
+   "tmpl": "lArH",
+   "nxt": "N_POSS3",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 2.5
+  },
+  {
+   "id": "ACC",
+   "tmpl": "(y)H",
+   "nxt": "N_CASE",
+   "n_tmpl": "nH",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "DAT",
+   "tmpl": "(y)A",
+   "nxt": "N_CASE",
+   "n_tmpl": "nA",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "LOC",
+   "tmpl": "DA",
+   "nxt": "N_LOCGEN",
+   "n_tmpl": "nDA",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "ABL",
+   "tmpl": "DAn",
+   "nxt": "N_CASE",
+   "n_tmpl": "nDAn",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "GEN",
+   "tmpl": "(n)Hn",
+   "nxt": "N_LOCGEN",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "INS",
+   "tmpl": "(y)lA",
+   "nxt": "N_CASE",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "EQU",
+   "tmpl": "CA",
+   "nxt": "N_CASE",
+   "n_tmpl": "ncA",
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "REL",
+   "tmpl": "ki",
+   "nxt": "N_REL",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "COP3",
+   "tmpl": "DHr",
+   "nxt": "N_COP",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PCOP",
+   "tmpl": "(y)DH",
+   "nxt": "V_K",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "KEN",
+   "tmpl": "(y)ken",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "ECOP",
+   "tmpl": "(y)mHş",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CCOP",
+   "tmpl": "(y)sA",
+   "nxt": "V_K",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "LH",
+   "tmpl": "lH",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "LHK",
+   "tmpl": "lHk",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": true,
+   "cost": 1.0
+  },
+  {
+   "id": "CH",
+   "tmpl": "CH",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "SHZ",
+   "tmpl": "sHz",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "LAS",
+   "tmpl": "lAş",
+   "nxt": "V",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "SAL",
+   "tmpl": "sAl",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "DAS",
+   "tmpl": "DAş",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "LA",
+   "tmpl": "lA",
+   "nxt": "V",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "LAN",
+   "tmpl": "lAn",
+   "nxt": "V",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "AGT",
+   "tmpl": "(y)HcH",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.3
+  },
+  {
+   "id": "VN_HS",
+   "tmpl": "(y)Hş",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.8
+  },
+  {
+   "id": "ORD",
+   "tmpl": "(H)ncH",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "DIST",
+   "tmpl": "(ş)Ar",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "DIM",
+   "tmpl": "CHk",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": true,
+   "cost": 1.5
+  },
+  {
+   "id": "CASINA",
+   "tmpl": "CAsHnA",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 2.0
+  },
+  {
+   "id": "VN_MACA",
+   "tmpl": "mAcA",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 2.0
+  },
+  {
+   "id": "RECP",
+   "tmpl": "(H)ş",
+   "nxt": "V_RECP",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "CAUS",
+   "tmpl": "<CAUS>",
+   "nxt": "V_CAUS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 0.9
+  },
+  {
+   "id": "PASS",
+   "tmpl": "<PASS>",
+   "nxt": "V_PASS",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "HVER",
+   "tmpl": "(y)Hver",
+   "nxt": "V_HVER",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "NEG",
+   "tmpl": "mA",
+   "nxt": "V_NEG",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "ABIL",
+   "tmpl": "(y)Abil",
+   "nxt": "V_NEG",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "IMPOT",
+   "tmpl": "(y)AmA",
+   "nxt": "V_NEG",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PROG",
+   "tmpl": "(H)yor",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PAST",
+   "tmpl": "DH",
+   "nxt": "V_PAST",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PROG_C",
+   "tmpl": "(H)yo",
+   "nxt": "V_ZC",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "FUT_C",
+   "tmpl": "(y)HcA",
+   "nxt": "V_FUTC",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.5
+  },
+  {
+   "id": "FUT_C2",
+   "tmpl": "cA",
+   "nxt": "V_FUTC",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.8
+  },
+  {
+   "id": "Z1SG_C",
+   "tmpl": "m",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "Z2SG_C",
+   "tmpl": "n",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "Z1PL_C",
+   "tmpl": "z",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "FUT_C3",
+   "tmpl": "k",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "LOC_C",
+   "tmpl": "DA",
+   "nxt": "N_LOCGEN",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "ABL_C",
+   "tmpl": "DAn",
+   "nxt": "N_CASE",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "FUT",
+   "tmpl": "(y)AcAk",
+   "nxt": "V_FUT",
+   "n_tmpl": null,
+   "soften": true,
+   "cost": 1.0
+  },
+  {
+   "id": "EVID",
+   "tmpl": "mHş",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "AOR",
+   "tmpl": "<AOR>",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "COND",
+   "tmpl": "sA",
+   "nxt": "V_COND",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "NECES",
+   "tmpl": "mAlH",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "OPT",
+   "tmpl": "(y)A",
+   "nxt": "V_OPT",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.3
+  },
+  {
+   "id": "OPT1PL",
+   "tmpl": "lHm",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "IMP3SG",
+   "tmpl": "sHn",
+   "nxt": "V_IMP3",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.2
+  },
+  {
+   "id": "IMP2PL",
+   "tmpl": "(y)Hn",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.4
+  },
+  {
+   "id": "IMP2PLF",
+   "tmpl": "(y)HnHz",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.4
+  },
+  {
+   "id": "CV_IP",
+   "tmpl": "(y)Hp",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CV_ARAK",
+   "tmpl": "(y)ArAk",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CV_INCA",
+   "tmpl": "(y)HncA",
+   "nxt": "V_INCA",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CV_DIKCE",
+   "tmpl": "DHkçA",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CV_MADAN",
+   "tmpl": "mAdAn",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "CV_MAKSIZIN",
+   "tmpl": "mAksHzHn",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PROG2",
+   "tmpl": "mAktA",
+   "nxt": "V_Z",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "PART_DHK",
+   "tmpl": "DHk",
+   "nxt": "N_PART",
+   "n_tmpl": null,
+   "soften": true,
+   "cost": 1.0
+  },
+  {
+   "id": "PART_AN",
+   "tmpl": "(y)An",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "INF",
+   "tmpl": "mAk",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "VN",
+   "tmpl": "mA",
+   "nxt": "N",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 2.2
+  },
+  {
+   "id": "Z1SG",
+   "tmpl": "(y)Hm",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 0.9
+  },
+  {
+   "id": "Z2SG",
+   "tmpl": "sHn",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 0.9
+  },
+  {
+   "id": "Z1PL",
+   "tmpl": "(y)Hz",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 0.9
+  },
+  {
+   "id": "Z2PL",
+   "tmpl": "sHnHz",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 0.9
+  },
+  {
+   "id": "Z3PL",
+   "tmpl": "lAr",
+   "nxt": "V_Z3PL",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "K1SG",
+   "tmpl": "m",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "K2SG",
+   "tmpl": "n",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "K1PL",
+   "tmpl": "k",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "K2PL",
+   "tmpl": "nHz",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  },
+  {
+   "id": "K3PL",
+   "tmpl": "lAr",
+   "nxt": "END",
+   "n_tmpl": null,
+   "soften": false,
+   "cost": 1.0
+  }
+ ],
+ "states": {
+  "N": [
+   "PL",
+   "P1SG",
+   "P2SG",
+   "P3SG",
+   "P1PL",
+   "P2PL",
+   "P3PL",
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU",
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN",
+   "LH",
+   "LHK",
+   "CH",
+   "SHZ",
+   "LAS",
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL",
+   "REL",
+   "SAL",
+   "DAS",
+   "LA",
+   "LAN",
+   "ORD",
+   "DIST",
+   "DIM",
+   "LOC_C",
+   "ABL_C",
+   "CASINA"
+  ],
+  "N_PL": [
+   "P1SG",
+   "P2SG",
+   "P3SG",
+   "P1PL",
+   "P2PL",
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU",
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN"
+  ],
+  "N_POSS": [
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU",
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN",
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL"
+  ],
+  "N_POSS3": [
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU",
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN",
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL"
+  ],
+  "N_CASE": [
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN",
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL",
+   "LHK"
+  ],
+  "N_LOCGEN": [
+   "REL",
+   "COP3",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN",
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL",
+   "LHK"
+  ],
+  "N_REL": [
+   "PL",
+   "P3SG",
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU",
+   "COP3"
+  ],
+  "N_COP": [
+   "Z3PL"
+  ],
+  "V_Z3PL": [
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "COP3",
+   "KEN"
+  ],
+  "N_PART": [
+   "P1SG",
+   "P2SG",
+   "P3SG",
+   "P1PL",
+   "P2PL",
+   "P3PL",
+   "PL",
+   "ABL"
+  ],
+  "V": [
+   "RECP",
+   "CAUS",
+   "PASS",
+   "NEG",
+   "ABIL",
+   "IMPOT",
+   "HVER",
+   "AGT",
+   "VN_HS",
+   "VN_MACA",
+   "CV_MADAN",
+   "CV_MAKSIZIN",
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_RECP": [
+   "CAUS",
+   "PASS",
+   "NEG",
+   "ABIL",
+   "IMPOT",
+   "HVER",
+   "AGT",
+   "VN_HS",
+   "VN_MACA",
+   "CV_MADAN",
+   "CV_MAKSIZIN",
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_CAUS": [
+   "CAUS",
+   "PASS",
+   "NEG",
+   "ABIL",
+   "IMPOT",
+   "HVER",
+   "AGT",
+   "VN_HS",
+   "VN_MACA",
+   "CV_MADAN",
+   "CV_MAKSIZIN",
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_PASS": [
+   "CAUS",
+   "PASS",
+   "NEG",
+   "ABIL",
+   "IMPOT",
+   "HVER",
+   "AGT",
+   "VN_HS",
+   "VN_MACA",
+   "CV_MADAN",
+   "CV_MAKSIZIN",
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_HVER": [
+   "NEG",
+   "ABIL",
+   "IMPOT",
+   "AGT",
+   "VN_HS",
+   "VN_MACA",
+   "CV_MADAN",
+   "CV_MAKSIZIN",
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_NEG": [
+   "PROG",
+   "PROG2",
+   "PROG_C",
+   "FUT_C",
+   "FUT_C2",
+   "PAST",
+   "FUT",
+   "EVID",
+   "AOR",
+   "COND",
+   "NECES",
+   "OPT",
+   "PART_DHK",
+   "PART_AN",
+   "INF",
+   "VN",
+   "IMP3SG",
+   "IMP2PL",
+   "IMP2PLF",
+   "CV_IP",
+   "CV_ARAK",
+   "CV_INCA",
+   "CV_DIKCE"
+  ],
+  "V_Z": [
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL",
+   "Z3PL",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "COP3",
+   "KEN",
+   "LHK",
+   "CASINA"
+  ],
+  "V_INCA": [
+   "DAT"
+  ],
+  "V_ZC": [
+   "Z1SG_C",
+   "Z2SG_C",
+   "Z1PL_C",
+   "Z2PL",
+   "Z3PL",
+   "PCOP",
+   "ECOP",
+   "CCOP",
+   "KEN"
+  ],
+  "V_FUTC": [
+   "Z1SG_C",
+   "Z2SG_C",
+   "Z1PL_C",
+   "FUT_C3"
+  ],
+  "V_K": [
+   "K1SG",
+   "K2SG",
+   "K1PL",
+   "K2PL",
+   "K3PL"
+  ],
+  "V_PAST": [
+   "K1SG",
+   "K2SG",
+   "K1PL",
+   "K2PL",
+   "K3PL",
+   "CCOP"
+  ],
+  "V_COND": [
+   "K1SG",
+   "K2SG",
+   "K1PL",
+   "K2PL",
+   "K3PL",
+   "PCOP",
+   "ECOP"
+  ],
+  "V_IMP3": [
+   "Z3PL"
+  ],
+  "V_OPT": [
+   "Z1SG",
+   "Z2SG",
+   "OPT1PL",
+   "Z2PL",
+   "Z3PL",
+   "PCOP"
+  ],
+  "V_FUT": [
+   "Z1SG",
+   "Z2SG",
+   "Z1PL",
+   "Z2PL",
+   "Z3PL",
+   "PCOP",
+   "ECOP",
+   "COP3",
+   "KEN",
+   "P1SG",
+   "P2SG",
+   "P3SG",
+   "P1PL",
+   "P2PL",
+   "P3PL",
+   "PL",
+   "ACC",
+   "DAT",
+   "LOC",
+   "ABL",
+   "GEN",
+   "INS",
+   "EQU"
+  ],
+  "END": []
+ },
+ "final": [
+  "END",
+  "N",
+  "N_CASE",
+  "N_COP",
+  "N_LOCGEN",
+  "N_PL",
+  "N_POSS",
+  "N_POSS3",
+  "N_REL",
+  "V",
+  "V_CAUS",
+  "V_COND",
+  "V_FUT",
+  "V_FUTC",
+  "V_HVER",
+  "V_IMP3",
+  "V_INCA",
+  "V_K",
+  "V_NEG",
+  "V_OPT",
+  "V_PASS",
+  "V_PAST",
+  "V_RECP",
+  "V_Z",
+  "V_Z3PL",
+  "V_ZC"
+ ],
+ "pos_start": {
+  "N": "N",
+  "PROPER": "N",
+  "PRON": "N",
+  "V": "V",
+  "Q": "V_Z",
+  "X": "END"
+ },
+ "pron_n_states": [
+  "N_POSS3"
+ ],
+ "root_gated": [
+  [
+   "N",
+   "REL",
+   "temporal"
+  ],
+  [
+   "N",
+   "ORD",
+   "num"
+  ],
+  [
+   "N",
+   "DIST",
+   "num"
+  ],
+  [
+   "N",
+   "LOC_C",
+   "coll"
+  ],
+  [
+   "N",
+   "ABL_C",
+   "coll"
+  ]
+ ],
+ "suppletion": [
+  [
+   "ben",
+   "DAT",
+   "bana"
+  ],
+  [
+   "sen",
+   "DAT",
+   "sana"
+  ],
+  [
+   "ben",
+   "GEN",
+   "benim"
+  ],
+  [
+   "biz",
+   "GEN",
+   "bizim"
+  ],
+  [
+   "ben",
+   "INS",
+   "benimle"
+  ],
+  [
+   "sen",
+   "INS",
+   "seninle"
+  ],
+  [
+   "biz",
+   "INS",
+   "bizimle"
+  ],
+  [
+   "siz",
+   "INS",
+   "sizinle"
+  ],
+  [
+   "o",
+   "INS",
+   "onunla"
+  ],
+  [
+   "bu",
+   "INS",
+   "bununla"
+  ],
+  [
+   "şu",
+   "INS",
+   "şununla"
+  ],
+  [
+   "gel",
+   "CAUS",
+   "getir"
+  ],
+  [
+   "kalk",
+   "CAUS",
+   "kaldır"
+  ]
+ ],
+ "markable": [
+  "PL",
+  "P1SG",
+  "P2SG",
+  "P3SG",
+  "P1PL",
+  "P2PL",
+  "P3PL",
+  "ACC",
+  "DAT",
+  "LOC",
+  "ABL",
+  "GEN",
+  "INS",
+  "EQU",
+  "COP3",
+  "PCOP",
+  "ECOP"
+ ],
+ "marked": {
+  "PL": [
+   "lar",
+   "ler",
+   "nlar",
+   "nler"
+  ],
+  "P1SG": [
+   "im",
+   "m",
+   "um",
+   "üm",
+   "ım"
+  ],
+  "P2SG": [
+   "in",
+   "n",
+   "un",
+   "ün",
+   "ın"
+  ],
+  "P3SG": [
+   "i",
+   "si",
+   "su",
+   "sü",
+   "sı",
+   "u",
+   "ü",
+   "ı"
+  ],
+  "P1PL": [
+   "imiz",
+   "miz",
+   "muz",
+   "müz",
+   "mız",
+   "umuz",
+   "ümüz",
+   "ımız"
+  ],
+  "P2PL": [
+   "iniz",
+   "niz",
+   "nuz",
+   "nüz",
+   "nız",
+   "unuz",
+   "ünüz",
+   "ınız"
+  ],
+  "P3PL": [
+   "ları",
+   "leri"
+  ],
+  "ACC": [
+   "i",
+   "ni",
+   "nu",
+   "nü",
+   "nı",
+   "u",
+   "yi",
+   "yu",
+   "yü",
+   "yı",
+   "ü",
+   "ı"
+  ],
+  "DAT": [
+   "a",
+   "e",
+   "na",
+   "ne",
+   "ya",
+   "ye"
+  ],
+  "LOC": [
+   "da",
+   "de",
+   "nda",
+   "nde",
+   "ta",
+   "te"
+  ],
+  "ABL": [
+   "dan",
+   "den",
+   "ndan",
+   "nden",
+   "tan",
+   "ten"
+  ],
+  "GEN": [
+   "in",
+   "nin",
+   "nun",
+   "nün",
+   "nın",
+   "un",
+   "ün",
+   "ın"
+  ],
+  "INS": [
+   "la",
+   "le",
+   "yla",
+   "yle"
+  ],
+  "EQU": [
+   "ca",
+   "ce",
+   "nca",
+   "nce",
+   "ça",
+   "çe"
+  ],
+  "COP3": [
+   "dir",
+   "dur",
+   "dür",
+   "dır",
+   "tir",
+   "tur",
+   "tür",
+   "tır"
+  ],
+  "PCOP": [
+   "di",
+   "du",
+   "dü",
+   "dı",
+   "ti",
+   "tu",
+   "tü",
+   "tı",
+   "ydi",
+   "ydu",
+   "ydü",
+   "ydı"
+  ],
+  "ECOP": [
+   "miş",
+   "muş",
+   "müş",
+   "mış",
+   "ymiş",
+   "ymuş",
+   "ymüş",
+   "ymış"
+  ]
+ },
+ "first_chars": {
+  "PL": "ln",
+  "P1SG": "imuüı",
+  "P2SG": "inuüı",
+  "P3SG": "isuyüı",
+  "P1PL": "imuüı",
+  "P2PL": "inuüı",
+  "P3PL": "l",
+  "ACC": "inuyüı",
+  "DAT": "aeny",
+  "LOC": "dnt",
+  "ABL": "dnt",
+  "GEN": "inuyüı",
+  "INS": "ly",
+  "EQU": "cnç",
+  "REL": "k",
+  "COP3": "dt",
+  "PCOP": "dty",
+  "KEN": "ky",
+  "ECOP": "my",
+  "CCOP": "sy",
+  "LH": "l",
+  "LHK": "l",
+  "CH": "cç",
+  "SHZ": "s",
+  "LAS": "l",
+  "SAL": "s",
+  "DAS": "dt",
+  "LA": "l",
+  "LAN": "l",
+  "AGT": "iuyüı",
+  "VN_HS": "iuyüı",
+  "ORD": "inuüı",
+  "DIST": "aeş",
+  "DIM": "cç",
+  "CASINA": "cç",
+  "VN_MACA": "m",
+  "RECP": "iuüış",
+  "CAUS": "adeituüı",
+  "PASS": "inuüı",
+  "HVER": "iuyüı",
+  "NEG": "m",
+  "ABIL": "aey",
+  "IMPOT": "aey",
+  "PROG": "iuyüı",
+  "PAST": "dt",
+  "PROG_C": "iuyüı",
+  "FUT_C": "iuyüı",
+  "FUT_C2": "c",
+  "Z1SG_C": "m",
+  "Z2SG_C": "n",
+  "Z1PL_C": "z",
+  "FUT_C3": "k",
+  "LOC_C": "dt",
+  "ABL_C": "dt",
+  "FUT": "aey",
+  "EVID": "m",
+  "AOR": "aeiruzüı",
+  "COND": "s",
+  "NECES": "m",
+  "OPT": "aey",
+  "OPT1PL": "l",
+  "IMP3SG": "s",
+  "IMP2PL": "iuyüı",
+  "IMP2PLF": "iuyüı",
+  "CV_IP": "iuyüı",
+  "CV_ARAK": "aey",
+  "CV_INCA": "iuyüı",
+  "CV_DIKCE": "dt",
+  "CV_MADAN": "m",
+  "CV_MAKSIZIN": "m",
+  "PROG2": "m",
+  "PART_DHK": "dt",
+  "PART_AN": "aey",
+  "INF": "m",
+  "VN": "m",
+  "Z1SG": "imuyüı",
+  "Z2SG": "s",
+  "Z1PL": "iuyüı",
+  "Z2PL": "s",
+  "Z3PL": "l",
+  "K1SG": "m",
+  "K2SG": "n",
+  "K1PL": "k",
+  "K2PL": "n",
+  "K3PL": "l"
+ },
+ "no_filter": [
+  "AOR",
+  "PROG",
+  "PROG_C"
+ ],
+ "cp3_swap": [
+  "P1PL",
+  "P1SG",
+  "P2PL",
+  "P2SG",
+  "P3PL",
+  "PL"
+ ],
+ "de_keep": [
+  "CV_INCA",
+  "CV_IP",
+  "IMP2PL",
+  "IMP2PLF",
+  "VN_HS"
+ ],
+ "predicative_start": [
+  "Z1PL",
+  "Z1SG",
+  "Z2PL",
+  "Z2SG"
+ ],
+ "marked_cost": 2.0,
+ "union_margin": 2.3,
+ "predicative_penalty": 1.5,
+ "letter_names": {
+  "a": "a",
+  "b": "be",
+  "c": "ce",
+  "ç": "çe",
+  "d": "de",
+  "e": "e",
+  "f": "fe",
+  "g": "ge",
+  "ğ": "yumuşakge",
+  "h": "he",
+  "ı": "ı",
+  "i": "i",
+  "j": "je",
+  "k": "ke",
+  "l": "le",
+  "m": "me",
+  "n": "ne",
+  "o": "o",
+  "ö": "ö",
+  "p": "pe",
+  "r": "re",
+  "s": "se",
+  "ş": "şe",
+  "t": "te",
+  "u": "u",
+  "ü": "ü",
+  "v": "ve",
+  "y": "ye",
+  "z": "ze",
+  "q": "kü",
+  "w": "dabılyu",
+  "x": "iks"
+ }
+}

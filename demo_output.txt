@@ -1,0 +1,85 @@
+evlerimizdekiler       -> R:ev#N S:PL S:P1PL S:LOC S:REL S:PL
+kitabımızdan           -> R:kitap#N S:P1PL S:ABL
+kalktığımızda          -> R:kalk#V S:PART_DHK S:P1PL S:LOC
+gidiyorum              -> R:git#V S:PROG S:Z1SG
+ağzından               -> R:ağız#N S:P3SG S:ABL
+hakkında               -> R:hak#N S:P3SG S:LOC
+saatlerde              -> R:saat#N S:PL S:LOC
+kalbimiz               -> R:kalp#N S:P1PL
+rengi                  -> R:renk#N S:ACC
+topu                   -> R:top#N S:ACC
+suyu                   -> R:su#N S:ACC
+bana                   -> R:ben#PRON S:DAT
+onda                   -> R:o#PRON S:LOC
+diyor                  -> R:de#V S:PROG
+söylüyor               -> R:söyle#V S:PROG
+arıyor                 -> R:ara#V S:PROG
+geleceğim              -> R:gel#V S:FUT S:Z1SG
+gelmiyor               -> R:gel#V S:NEG S:PROG
+gelmez                 -> R:gel#V S:NEG S:AOR
+alır                   -> R:al#V S:AOR
+yapar                  -> R:yap#V S:AOR
+okur                   -> R:oku#V S:AOR
+yapabilir              -> R:yap#V S:ABIL S:AOR
+reddi                  -> R:ret#N S:ACC
+şehrimizde             -> R:şehir#N S:P1PL S:LOC
+oğlu                   -> R:oğul#N S:ACC
+kalıplaşmış            -> R:kalıp#N S:LAS S:EVID
+geçmişten              -> R:geçmiş#N S:ABL
+günümüze               -> R:gün#N S:P1PL S:DAT
+bakımından             -> R:bakım#N S:P3SG S:ABL
+mecazlı                -> R:mecaz#N S:LH
+sözlerdir              -> R:söz#N S:PL S:COP3
+Danimarka'dan          -> <cap> R:danimarka#PROPER <apos> S:ABL
+Danimarka              -> <cap> R:danimarka#PROPER
+komünistlerden         -> L:▁komünist S:PL S:ABL
+Avrupa                 -> <cap> L:▁avrupa
+2023'te                -> D:2 D:0 D:2 D:3 <apos> S:LOC
+6'dan                  -> D:6 <apos> S:ABL
+10'a                   -> D:1 D:0 <apos> S:DAT
+meeting'e              -> L:▁meeting <apos> S:DAT
+Bordeaux'ya            -> <cap> L:▁bordeaux <apos> S:DAT!ya
+ANKARA'DA              -> <caps> R:ankara#PROPER <apos> S:LOC
+iPhone                 -> L:▁ L:i L:P L:h L:o L:n L:e
+yazıldı                -> R:yaz#V S:PASS S:PAST
+okundu                 -> R:oku#V S:PASS S:PAST
+bilinen                -> R:bil#V S:PASS S:PART_AN
+yaptırdım              -> R:yap#V S:CAUS S:PAST S:K1SG
+okuttu                 -> R:oku#V S:CAUS S:PAST
+batırdı                -> R:bat#V S:CAUS S:PAST
+çıkardık               -> R:çık#V S:CAUS S:PAST S:K1PL
+getirdi                -> R:gel#V S:CAUS S:PAST
+gidiverdi              -> R:git#V S:HVER S:PAST
+yapamadım              -> R:yap#V S:IMPOT S:PAST S:K1SG
+gelmeli                -> R:gel#V S:NECES
+gelip                  -> R:gel#V S:CV_IP
+gelince                -> R:gel#V S:CV_INCA
+gelirken               -> R:gel#V S:AOR S:KEN
+çocukken               -> R:çocuk#N S:KEN
+evdeyken               -> R:ev#N S:LOC S:KEN
+dünkü                  -> R:dün#N S:REL
+yarınki                -> R:yarın#N S:REL
+gelseydik              -> R:gel#V S:COND S:PCOP S:K1PL
+geldiyse               -> R:gel#V S:PAST S:CCOP
+gelsinler              -> R:gel#V S:IMP3SG S:Z3PL
+suyun                  -> R:su#N S:GEN
+onlar                  -> R:o#PRON S:PL
+bunlara                -> R:bu#PRON S:PL S:DAT
+benim                  -> R:ben#PRON S:GEN
+bizimki                -> R:biz#PRON S:GEN S:REL
+onunla                 -> R:o#PRON S:INS
+görüştük               -> R:gör#V S:RECP S:PAST S:K1PL
+
+[OK]  11 tokens | 'Kalktığımızda hep birlikte yürüdük.'
+[OK]  21 tokens | "Evlerimizdekiler, Danimarka'dan 2023'te geldi!"
+[OK]  73 tokens | 'The meeting was postponed; el gobierno  dijo  que no.\n\tYeni satır (parantez) "tırnak" ☃ emoji 🙂'
+[OK]  28 tokens | '  baştaki boşluk ve sondaki   '
+[OK]  22 tokens | "İSTANBUL'DA Iğdır ısı İzmir"
+[OK]  21 tokens | "1 2 3 ve 12 34 5'te"
+
+vocab size: 926 {'BYTE': 256, 'SFX': 67, 'SFX_MARKED': 116, 'ROOT': 126, 'LEX': 293, 'DIGIT': 10, 'PUNCT': 43}
+ABL id 281 SFX
+  L:▁komünist    id=  782 ns=LEX
+  S:PL           id=  271 ns=SFX
+  S:ABL          id=  281 ns=SFX
+encode paths: {'known': 68, 'guess': 1, 'lex': 21, 'apos': 5, 'raw': 1}

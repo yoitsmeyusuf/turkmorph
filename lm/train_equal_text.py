@@ -1,0 +1,154 @@
+"""Train a GPT on every shared text segment once, in a seed-paired order."""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+# Batches have many different lengths; the default allocator keeps a block per size and runs out of 8 GB.
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
+import numpy as np
+import torch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from lm.model import GPT, bpc, n_params
+from lm.train import learning_rate_scale, pace_step
+
+
+def load_split(root, name, split):
+    ids = np.memmap(root / name / f"{split}.bin", mode="r", dtype="<u4")
+    offsets = np.load(root / name / f"{split}_offsets.npy")
+    chars = np.load(root / f"{split}_chars.npy")
+    if (len(offsets) != len(chars) + 1 or offsets[0] != 0 or offsets[-1] != len(ids)
+            or np.any(np.diff(offsets) <= 0) or np.any(chars <= 0)):
+        raise ValueError(f"Invalid segment boundaries: {name}/{split}")
+    return ids, offsets, chars
+
+
+def text_batch(split, indices, bos):
+    ids, offsets, chars = split
+    lengths = offsets[indices + 1] - offsets[indices]
+    x = np.zeros((len(indices), int(lengths.max())), dtype=np.int64)
+    y = np.full_like(x, -100)
+    for row, index in enumerate(indices):
+        tokens = ids[offsets[index]:offsets[index + 1]]
+        x[row, 0] = bos
+        x[row, 1:len(tokens)] = tokens[:-1]
+        y[row, :len(tokens)] = tokens
+    return torch.from_numpy(x), torch.from_numpy(y), int(chars[indices].sum()), int(lengths.sum())
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--data-root", type=Path, required=True)
+    ap.add_argument("--tokenizer", choices=["morph", "bpe"], required=True)
+    ap.add_argument("--output-dir", type=Path, required=True)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--d", type=int, default=384)
+    ap.add_argument("--layers", type=int, default=6)
+    ap.add_argument("--ctx", type=int, default=512)
+    ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument("--lr", type=float, default=1e-3)
+    ap.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
+    ap.add_argument("--duty-cycle", type=float, default=.7)
+    args = ap.parse_args()
+    if (args.batch < 1 or args.d < 64 or args.d % 64 or args.layers < 1
+            or args.ctx < 1 or not 0 < args.duty_cycle <= 1):
+        ap.error("Invalid model, batch or duty-cycle settings")
+    if args.device == "cuda" and not torch.cuda.is_available():
+        ap.error("CUDA is unavailable here; use the GPU-enabled WSL terminal")
+    if (args.output_dir / "model.pt").exists():
+        ap.error("Refusing to overwrite an existing checkpoint")
+    torch.manual_seed(args.seed)
+    torch.set_num_threads(min(8, torch.get_num_threads()))
+    meta = json.loads((args.data_root / "meta.json").read_text())
+    train = load_split(args.data_root, args.tokenizer, "train")
+    valid = load_split(args.data_root, args.tokenizer, "valid")
+    if any(int(np.diff(split[1]).max()) > args.ctx for split in (train, valid)):
+        ap.error("A segment exceeds model context; truncation is forbidden")
+    for name, split in (("train", train), ("valid", valid)):
+        if int(split[2].sum()) != meta["splits"][name]["chars"]:
+            raise ValueError(f"Character count mismatch: {name}")
+        if int(split[0].max()) >= meta["base_vocab_size"]:
+            raise ValueError(f"Token id outside vocabulary: {name}")
+    order = np.random.default_rng(args.seed).permutation(len(train[2]))
+    order_hash = hashlib.sha256(order.astype("<i8").tobytes()).hexdigest()
+    steps = (len(order) + args.batch - 1) // args.batch
+    model = GPT(meta["vocab_size"], args.d, args.layers, args.d // 64, args.ctx).to(args.device)
+    opt = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(.9, .95), weight_decay=.1,
+                            fused=args.device == "cuda")
+    schedule = torch.optim.lr_scheduler.LambdaLR(opt, lambda s: learning_rate_scale(s, steps))
+    amp = args.device == "cuda" and torch.cuda.is_bf16_supported()
+    config = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
+    config.update(data_meta=meta, train_order_sha256=order_hash,
+                  torch=str(torch.__version__), precision="bfloat16" if amp else "float32",
+                  device_name=torch.cuda.get_device_name(0) if args.device == "cuda" else "cpu",
+                  loss_normalization="summed token NLL / batch characters",
+                  evaluation="identical text segments; all tokens scored from shared BOS; right padding ignored")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    (args.output_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
+    print(f"{args.tokenizer}, seed {args.seed}: {steps} steps, {meta['splits']['train']['chars']:,} characters, "
+          f"{meta['splits']['train']['tokens'][args.tokenizer]:,} tokens; output {args.output_dir}", flush=True)
+    seen_chars = seen_tokens = 0
+    started = time.monotonic()
+    model.train()
+    for step, start in enumerate(range(0, len(order), args.batch)):
+        tick = time.perf_counter()
+        x, y, chars, tokens = text_batch(train, order[start:start + args.batch], meta["bos_id"])
+        x, y = x.to(args.device), y.to(args.device)
+        opt.zero_grad(set_to_none=True)
+        with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
+            loss = model(x, y)
+        (loss / chars).backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+        opt.step()
+        schedule.step()
+        seen_chars += chars
+        seen_tokens += tokens
+        pace_step(tick, args.duty_cycle, args.device)
+        if step % 50 == 0 or step + 1 == steps:
+            elapsed = time.monotonic() - started
+            eta = elapsed / (step + 1) * (steps - step - 1) / 60
+            print(f"step {step+1}/{steps} nats/char {loss.item()/chars:.4f}; "
+                  f"seen {seen_chars:,} chars; training ETA {eta:.1f} min (validation extra)", flush=True)
+    train_s = time.monotonic() - started
+    if seen_chars != meta["splits"]["train"]["chars"]:
+        raise ValueError("Training did not cover exactly the planned text")
+    torch.save({"model_state": model.state_dict(), "optimizer_state": opt.state_dict(),
+                "scheduler_state": schedule.state_dict(), "config": config,
+                "train_chars_seen": seen_chars, "train_tokens_seen": seen_tokens}, args.output_dir / "model.pt")
+    print("Saved checkpoint; evaluating identical validation segments", flush=True)
+    model.eval()
+    total = 0.
+    valid_chars = valid_tokens = 0
+    with torch.no_grad():
+        for start in range(0, len(valid[2]), args.batch):
+            tick = time.perf_counter()
+            indices = np.arange(start, min(start + args.batch, len(valid[2])))
+            x, y, chars, tokens = text_batch(valid, indices, meta["bos_id"])
+            with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
+                total += model(x.to(args.device), y.to(args.device)).item()
+            valid_chars += chars
+            valid_tokens += tokens
+            pace_step(tick, args.duty_cycle, args.device)
+    if valid_chars != meta["splits"]["valid"]["chars"]:
+        raise ValueError("Validation text coverage mismatch")
+    result = {"data": args.tokenizer, "seed": args.seed, "model": "gpt", "params": n_params(model, False),
+              "non_emb_params": n_params(model), "steps": steps, "train_s": round(train_s, 2),
+              "train_chars_seen": seen_chars, "train_tokens_seen": seen_tokens,
+              "train_order_sha256": order_hash, "train_text_sha256": meta["splits"]["train"]["sha256"],
+              "valid_chars": valid_chars, "valid_tokens_scored": valid_tokens,
+              "valid_text_sha256": meta["splits"]["valid"]["sha256"],
+              "valid_bpc": bpc(total, valid_chars), "output_dir": str(args.output_dir)}
+    (args.output_dir / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "turkmorph"
+version = "0.2.0"
+description = "Lossless Turkish morphological tokenizer with archiphonemic suffix ids"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["turkmorph"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,274 @@
+# category	word	expected tokens (space-separated)
+yumusama	kitabı	R:kitap#N S:ACC
+yumusama	ağacı	R:ağaç#N S:ACC
+yumusama	rengi	R:renk#N S:ACC
+yumusama	köpeği	R:köpek#N S:ACC
+yumusama	çocuğu	R:çocuk#N S:ACC
+yumusama	kalbi	R:kalp#N S:ACC
+yumusama	dolabı	R:dolap#N S:ACC
+yumusama	kanadı	R:kanat#N S:ACC
+yumusama	sokağı	R:sokak#N S:ACC
+yumusama	ekmeği	R:ekmek#N S:ACC
+yumusama	çiçeği	R:çiçek#N S:ACC
+yumusama	kulağı	R:kulak#N S:ACC
+yumusama	bıçağı	R:bıçak#N S:ACC
+yumusama	gidiyor	R:git#V S:PROG
+yumusama	ediyor	R:et#V S:PROG
+yumusama	tadıyor	R:tat#V S:PROG
+yumusama	kalktığım	R:kalk#V S:PART_DHK S:P1SG
+yumusama	geleceğim	R:gel#V S:FUT S:Z1SG
+yumusama	gözlüğü	R:göz#N S:LHK S:ACC
+yumusama_yok	topu	R:top#N S:ACC
+yumusama_yok	hukuku	R:hukuk#N S:ACC
+yumusama_yok	saati	R:saat#N S:ACC
+yumusama_yok	sütü	R:süt#N S:ACC
+yumusama_yok	sepeti	R:sepet#N S:ACC
+yumusama_yok	atıyor	R:at#V S:PROG
+yumusama_yok	bitiyor	R:bit#V S:PROG
+yumusama_yok	kitapta	R:kitap#N S:LOC
+yumusama_yok	kitaplar	R:kitap#N S:PL
+dusme	ağzı	R:ağız#N S:ACC
+dusme	burnu	R:burun#N S:ACC
+dusme	oğlu	R:oğul#N S:ACC
+dusme	şehri	R:şehir#N S:ACC
+dusme	resmi	R:resim#N S:ACC
+dusme	boynu	R:boyun#N S:ACC
+dusme	karnı	R:karın#N S:ACC
+dusme	ismi	R:isim#N S:ACC
+dusme	fikri	R:fikir#N S:ACC
+dusme	aklı	R:akıl#N S:ACC
+dusme	bağrı	R:bağır#N S:ACC
+dusme	şehrimizde	R:şehir#N S:P1PL S:LOC
+dusme	bağırıyor	R:bağır#V S:PROG
+dusme	ağız	R:ağız#N
+ikizlesme	hakkı	R:hak#N S:ACC
+ikizlesme	hissi	R:his#N S:ACC
+ikizlesme	reddi	R:ret#N S:ACC
+ikizlesme	sırrı	R:sır#N S:ACC
+ikizlesme	tıbbı	R:tıp#N S:ACC
+ikizlesme	zannı	R:zan#N S:ACC
+ikizlesme	hakkında	R:hak#N S:P3SG S:LOC
+uyum_istisnasi	saati	R:saat#N S:ACC
+uyum_istisnasi	saatler	R:saat#N S:PL
+uyum_istisnasi	saatte	R:saat#N S:LOC
+uyum_istisnasi	rolü	R:rol#N S:ACC
+uyum_istisnasi	alkolü	R:alkol#N S:ACC
+uyum_istisnasi	kalbi	R:kalp#N S:ACC
+uyum_istisnasi	dikkati	R:dikkat#N S:ACC
+uyum_istisnasi	kabulü	R:kabul#N S:ACC
+uyum_istisnasi	hayali	R:hayal#N S:ACC
+uyum_istisnasi	golü	R:gol#N S:ACC
+uyum_istisnasi	hali	R:hal#N S:ACC
+uyum_istisnasi	halde	R:hal#N S:LOC
+duzenli_uyum	evler	R:ev#N S:PL
+duzenli_uyum	kitaplar	R:kitap#N S:PL
+duzenli_uyum	gözüm	R:göz#N S:P1SG
+duzenli_uyum	gözler	R:göz#N S:PL
+duzenli_uyum	okulda	R:okul#N S:LOC
+duzenli_uyum	günü	R:gün#N S:ACC
+duzenli_uyum	günümüze	R:gün#N S:P1PL S:DAT
+duzenli_uyum	sözlerdir	R:söz#N S:PL S:COP3
+duzenli_uyum	insanlar	R:insan#N S:PL
+duzenli_uyum	dilde	R:dil#N S:LOC
+duzenli_uyum	yerler	R:yer#N S:PL
+benzesme	kitaptan	R:kitap#N S:ABL
+benzesme	sepette	R:sepet#N S:LOC
+benzesme	ağaççı	R:ağaç#N S:CH
+benzesme	yaptı	R:yap#V S:PAST
+benzesme	gitti	R:git#V S:PAST
+benzesme	kitapçı	R:kitap#N S:CH
+benzesme	göze	R:göz#N S:DAT
+kaynastirma	arabaya	R:araba#N S:DAT
+kaynastirma	arabası	R:araba#N S:P3SG
+kaynastirma	arabanın	R:araba#N S:GEN
+kaynastirma	masayı	R:masa#N S:ACC
+kaynastirma	kediye	R:kedi#N S:DAT
+kaynastirma	kedisi	R:kedi#N S:P3SG
+kaynastirma	suyu	R:su#N S:ACC
+kaynastirma	suyun	R:su#N S:GEN
+kaynastirma	neyi	R:ne#PRON S:ACC
+kaynastirma	ülkesi	R:ülke#N S:P3SG
+zamir_n	onu	R:o#PRON S:ACC
+zamir_n	bunu	R:bu#PRON S:ACC
+zamir_n	ona	R:o#PRON S:DAT
+zamir_n	buna	R:bu#PRON S:DAT
+zamir_n	onda	R:o#PRON S:LOC
+zamir_n	ondan	R:o#PRON S:ABL
+zamir_n	bunda	R:bu#PRON S:LOC
+zamir_n	şundan	R:şu#PRON S:ABL
+zamir_n	onlar	R:o#PRON S:PL
+zamir_n	bunlar	R:bu#PRON S:PL
+zamir_n	şunlara	R:şu#PRON S:PL S:DAT
+zamir_n	onların	R:o#PRON S:PL S:GEN
+supletif	bana	R:ben#PRON S:DAT
+supletif	sana	R:sen#PRON S:DAT
+supletif	benim	R:ben#PRON S:GEN
+supletif	bizim	R:biz#PRON S:GEN
+supletif	benimle	R:ben#PRON S:INS
+supletif	seninle	R:sen#PRON S:INS
+supletif	bizimle	R:biz#PRON S:INS
+supletif	onunla	R:o#PRON S:INS
+supletif	bununla	R:bu#PRON S:INS
+supletif	bizimki	R:biz#PRON S:GEN S:REL
+supletif	benimki	R:ben#PRON S:GEN S:REL
+supletif	getirdi	R:gel#V S:CAUS S:PAST
+supletif	kaldırdı	R:kalk#V S:CAUS S:PAST
+daralma	arıyor	R:ara#V S:PROG
+daralma	söylüyor	R:söyle#V S:PROG
+daralma	başlıyor	R:başla#V S:PROG
+daralma	anlıyor	R:anla#V S:PROG
+daralma	diyor	R:de#V S:PROG
+daralma	yiyor	R:ye#V S:PROG
+daralma	oynuyor	R:oyna#V S:PROG
+daralma	diyecek	R:de#V S:FUT
+daralma	yiyecek	R:ye#V S:FUT
+kopula	güzeldi	R:güzel#N S:PCOP
+kopula	hastaydı	R:hasta#N S:PCOP
+kopula	hastaymış	R:hasta#N S:ECOP
+kopula	güzelse	R:güzel#N S:CCOP
+kopula	evdeydi	R:ev#N S:LOC S:PCOP
+kopula	hastayken	R:hasta#N S:KEN
+kopula	çocukken	R:çocuk#N S:KEN
+kopula	evdeyken	R:ev#N S:LOC S:KEN
+fiil_cati	yazıldı	R:yaz#V S:PASS S:PAST
+fiil_cati	yapıldı	R:yap#V S:PASS S:PAST
+fiil_cati	okundu	R:oku#V S:PASS S:PAST
+fiil_cati	bilinen	R:bil#V S:PASS S:PART_AN
+fiil_cati	söylendi	R:söyle#V S:PASS S:PAST
+fiil_cati	yaptırdım	R:yap#V S:CAUS S:PAST S:K1SG
+fiil_cati	okuttu	R:oku#V S:CAUS S:PAST
+fiil_cati	batırdı	R:bat#V S:CAUS S:PAST
+fiil_cati	çıkardık	R:çık#V S:CAUS S:PAST S:K1PL
+fiil_cati	pişirdi	R:piş#V S:CAUS S:PAST
+fiil_cati	oturttu	R:otur#V S:CAUS S:PAST
+fiil_cati	yaptırttı	R:yap#V S:CAUS S:CAUS S:PAST
+fiil_cati	görüştük	R:gör#V S:RECP S:PAST S:K1PL
+kip_birlesik	yapabilir	R:yap#V S:ABIL S:AOR
+kip_birlesik	yapamaz	R:yap#V S:IMPOT S:AOR
+kip_birlesik	yapamadım	R:yap#V S:IMPOT S:PAST S:K1SG
+kip_birlesik	gidiverdi	R:git#V S:HVER S:PAST
+kip_birlesik	gelmeli	R:gel#V S:NECES
+kip_birlesik	gelmeliyim	R:gel#V S:NECES S:Z1SG
+kip_birlesik	okumalıyız	R:oku#V S:NECES S:Z1PL
+kip_birlesik	gelsinler	R:gel#V S:IMP3SG S:Z3PL
+kip_birlesik	okuyun	R:oku#V S:IMP2PL
+ulac	gelip	R:gel#V S:CV_IP
+ulac	gelince	R:gel#V S:CV_INCA
+ulac	gelerek	R:gel#V S:CV_ARAK
+ulac	geldikçe	R:gel#V S:CV_DIKCE
+ulac	okuyunca	R:oku#V S:CV_INCA
+ulac	yapmadan	R:yap#V S:CV_MADAN
+ulac	gelmeyip	R:gel#V S:NEG S:CV_IP
+zaman_kisi	gidiyorum	R:git#V S:PROG S:Z1SG
+zaman_kisi	gelmiyor	R:gel#V S:NEG S:PROG
+zaman_kisi	gelmez	R:gel#V S:NEG S:AOR
+zaman_kisi	alır	R:al#V S:AOR
+zaman_kisi	yapar	R:yap#V S:AOR
+zaman_kisi	okur	R:oku#V S:AOR
+zaman_kisi	gördüm	R:gör#V S:PAST S:K1SG
+zaman_kisi	gelseydik	R:gel#V S:COND S:PCOP S:K1PL
+zaman_kisi	geldiyse	R:gel#V S:PAST S:CCOP
+zaman_kisi	gelmişsin	R:gel#V S:EVID S:Z2SG
+zaman_kisi	geleceksiniz	R:gel#V S:FUT S:Z2PL
+zaman_kisi	yapmayacaklar	R:yap#V S:NEG S:FUT S:PL
+ki	evdeki	R:ev#N S:LOC S:REL
+ki	evdekiler	R:ev#N S:LOC S:REL S:PL
+ki	dünkü	R:dün#N S:REL
+ki	bugünkü	R:bugün#N S:REL
+ki	yarınki	R:yarın#N S:REL
+ki	akşamki	R:akşam#N S:REL
+ki	evlerimizdekiler	R:ev#N S:PL S:P1PL S:LOC S:REL S:PL
+ozel_isim	Danimarka'dan	<cap> R:danimarka#PROPER <apos> S:ABL
+ozel_isim	Danimarka	<cap> R:danimarka#PROPER
+ozel_isim	İstanbul'da	<cap> R:istanbul#PROPER <apos> S:LOC
+ozel_isim	Ankara'ya	<cap> R:ankara#PROPER <apos> S:DAT
+ozel_isim	Türkiye'nin	<cap> R:türkiye#PROPER <apos> S:GEN
+ozel_isim	ANKARA'DA	<caps> R:ankara#PROPER <apos> S:LOC
+ozel_isim	Danimarka'nın	<cap> R:danimarka#PROPER <apos> S:GEN
+sayi	2023'te	D:2 D:0 D:2 D:3 <apos> S:LOC
+sayi	6'dan	D:6 <apos> S:ABL
+sayi	10'a	D:1 D:0 <apos> S:DAT
+sayi	3'ü	D:3 <apos> S:ACC
+sayi	5'i	D:5 <apos> S:ACC
+sayi	100'den	D:1 D:0 D:0 <apos> S:ABL
+sayi	1000'e	D:1 D:0 D:0 D:0 <apos> S:DAT
+sayi	40'ı	D:4 D:0 <apos> S:ACC
+sayi	7'si	D:7 <apos> S:P3SG
+sayi	9'u	D:9 <apos> S:ACC
+sayi	60'tan	D:6 D:0 <apos> S:ABL
+sayi	1'in	D:1 <apos> S:GEN
+sayi	2'nin	D:2 <apos> S:GEN
+yabanci_lex	komünistlerden	L:▁komünist S:PL S:ABL
+yabanci_lex	Avrupa	<cap> L:▁avrupa
+yabanci_lex	meeting'e	L:▁meeting <apos> S:DAT
+yabanci_lex	Bordeaux'ya	<cap> L:▁bordeaux <apos> S:DAT!ya
+yabanci_lex	iPhone	L:▁ L:i L:P L:h L:o L:n L:e
+olumsuz_genis	gelmem	R:gel#V S:NEG S:AOR S:Z1SG
+olumsuz_genis	gelmeyiz	R:gel#V S:NEG S:AOR S:Z1PL
+olumsuz_genis	gelmezsin	R:gel#V S:NEG S:AOR S:Z2SG
+olumsuz_genis	yapamam	R:yap#V S:IMPOT S:AOR S:Z1SG
+istek	geleyim	R:gel#V S:OPT S:Z1SG
+istek	gelelim	R:gel#V S:OPT S:OPT1PL
+istek	gelesiniz	R:gel#V S:OPT S:Z2PL
+istek	okuyalım	R:oku#V S:OPT S:OPT1PL
+kisaltma	NATO'ya	<capsb> L:▁n L:a L:t L:o <apos> S:DAT
+kisaltma	TBMM'ye	<capsb> L:▁t L:b L:m L:m <apos> S:DAT
+kisaltma	THY'nin	<capsb> L:▁th L:y <apos> S:GEN
+kisaltma	ABD'de	<capsb> L:▁a L:b L:d <apos> S:LOC!de
+kisaltma	iPhone'u	L:▁ L:i L:P L:h L:o L:n L:e <apos> S:ACC!u
+kisaltma	ANKARA'da	<capsb> R:ankara#PROPER <apos> S:LOC
+uclu_cogul_kopula	gelmişlerdi	R:gel#V S:EVID S:Z3PL S:PCOP
+uclu_cogul_kopula	geliyorlardı	R:gel#V S:PROG S:Z3PL S:PCOP
+bilesik_p3	zeytinyağı	R:zeytinyağı#N
+bilesik_p3	zeytinyağına	R:zeytinyağı#N S:DAT
+bilesik_p3	zeytinyağları	R:zeytinyağı#N S:PL
+bilesik_p3	zeytinyağlarından	R:zeytinyağı#N S:PL S:ABL
+bilesik_p3	zeytinyağım	R:zeytinyağı#N S:P1SG
+bilesik_p3	işbirliği	R:işbirliği#N
+bilesik_p3	işbirlikleri	R:işbirliği#N S:PL
+bilesik_p3	işbirliğimiz	R:işbirliği#N S:P1PL
+bilesik_p3	işbirliğinde	R:işbirliği#N S:LOC
+zamir_p3	kendini	R:kendi#PRON S:ACC
+zamir_p3	kendine	R:kendi#PRON S:DAT
+zamir_p3	kendileri	R:kendi#PRON S:PL S:ACC
+zamir_p3	birbirine	R:birbiri#PRON S:DAT
+zamir_p3	birbirlerine	R:birbiri#PRON S:PL S:DAT
+zamir_p3	birbirimize	R:birbiri#PRON S:P1PL S:DAT
+zamir_p3	hepsine	R:hepsi#PRON S:DAT
+sayi_turetme	ikinci	R:iki#N S:ORD
+sayi_turetme	birinci	R:bir#N S:ORD
+sayi_turetme	üçüncü	R:üç#N S:ORD
+sayi_turetme	dördüncü	R:dört#N S:ORD
+sayi_turetme	birer	R:bir#N S:DIST
+sayi_turetme	ikişer	R:iki#N S:DIST
+sayi_turetme	dörder	R:dört#N S:DIST
+ulac_ek	gittikten	R:git#V S:PART_DHK S:ABL
+ulac_ek	gelinceye	R:gel#V S:CV_INCA S:DAT
+ulac_ek	olmadan	R:ol#V S:CV_MADAN
+ulac_ek	olmaksızın	R:ol#V S:CV_MAKSIZIN
+ulac_ek	deyince	R:de#V S:CV_INCA
+ulac_ek	deyip	R:de#V S:CV_IP
+ulac_ek	diyecek	R:de#V S:FUT
+ulac_ek	yiyip	R:ye#V S:CV_IP
+kopula_i	ise	R:i#Q S:CCOP
+kopula_i	idi	R:i#Q S:PCOP
+kopula_i	iken	R:i#Q S:KEN
+kopula_i	imiş	R:i#Q S:ECOP
+kopula_i	gibiydi	R:gibi#Q S:PCOP
+kopula_i	gibidir	R:gibi#Q S:COP3
+isim_fiil	oluşu	R:ol#V S:VN_HS S:ACC
+isim_fiil	bakışı	R:bak#V S:VN_HS S:ACC
+isim_fiil	yılki	R:yıl#N S:REL
+konusma_dili	geliyo	R:gel#V S:PROG_C
+konusma_dili	geliyom	R:gel#V S:PROG_C S:Z1SG_C
+konusma_dili	gelmiyom	R:gel#V S:NEG S:PROG_C S:Z1SG_C
+konusma_dili	geliyodu	R:gel#V S:PROG_C S:PCOP
+konusma_dili	yapıcam	R:yap#V S:FUT_C S:Z1SG_C
+konusma_dili	yapcam	R:yap#V S:FUT_C2 S:Z1SG_C
+konusma_dili	gelicez	R:gel#V S:FUT_C S:Z1PL_C
+konusma_dili	nerde	R:nere#N S:LOC_C
+konusma_dili	burdan	R:bura#N S:ABL_C
+konusma_dili	orda	R:ora#N S:LOC_C
+konusma_dili	burdaki	R:bura#N S:LOC_C S:REL
+kucultme	kedicik	R:kedi#N S:DIM
+kucultme	kalemcik	R:kalem#N S:DIM

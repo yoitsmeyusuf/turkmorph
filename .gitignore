@@ -1,0 +1,37 @@
+# Python / build artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv*/
+build/
+rust/target/
+turkmorph/_fast*.so
+*.egg-info/
+
+# Data: only the small tables the tokenizer needs at runtime are tracked.
+# Corpus, caches, model checkpoints and experiment outputs stay local.
+data/*
+!data/attested_stems.txt
+!data/costs.json
+!data/langid.json
+!data/lex_bpe.json
+!data/lexicon.tsv
+!data/morph_tables.json
+!data/overrides.tsv
+!data/proper_words.txt
+!data/tokenizer_tables.json
+!data/unions.txt
+!data/wordfreq.tsv
+!data/raw/
+data/raw/*
+!data/raw/zemberek-LICENSE
+
+# Experimental data variants (morphcomp runs) and checkpoints
+data_v2/
+data_v3/
+*.pt
+*.bin
+*.npy
+
+# Old prototype archive
+turkmorph_prototype.zip

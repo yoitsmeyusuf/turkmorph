@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TurkMorph Test</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6b66; --line: #e2e1dc;
+  --root: #d9f2e1; --root-b: #2e8b57; --sfx: #dde8fb; --sfx-b: #3b6fd1; --lex: #fde7cf; --lex-b: #c7741a;
+  --spec: #ececea; --spec-b: #8a8a85; --edit: #fbdada; --edit-b: #c23b3b; --ok: #2e8b57; --bad: #c23b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161615; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09f99; --line: #33332f;
+    --root: #173a26; --root-b: #5fcf8c; --sfx: #1b2b4a; --sfx-b: #7ea7f5; --lex: #3d2a14; --lex-b: #f0a656;
+    --spec: #2c2c29; --spec-b: #a8a7a1; --edit: #4a1f1f; --edit-b: #f08080; --ok: #5fcf8c; --bad: #f08080;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 16px; }
+textarea { width: 100%; min-height: 92px; padding: 10px 12px; font: inherit; color: var(--ink);
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px; resize: vertical; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 18px; }
+button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+button.primary { background: var(--sfx-b); border-color: var(--sfx-b); color: #fff; font-weight: 600; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .grid { grid-template-columns: 3fr 2fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+.panel h2 { font-size: 16px; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid; }
+.badge.ok { color: var(--ok); } .badge.bad { color: var(--bad); }
+.meta { color: var(--muted); font-size: 13px; font-weight: 400; }
+.words { display: flex; flex-direction: column; gap: 8px; }
+.word { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.word .surf { font-weight: 600; margin-bottom: 4px; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 1px 6px;
+  border-radius: 4px; border: 1px solid; white-space: pre; cursor: help; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ns-R, .ns-ROOT { background: var(--root); border-color: var(--root-b); }
+.ns-S, .ns-SUFFIX { background: var(--sfx); border-color: var(--sfx-b); }
+.ns-L, .ns-BPE, .ns-B { background: var(--lex); border-color: var(--lex-b); }
+.ns-E { background: var(--edit); border-color: var(--edit-b); }
+.ns-D, .ns-P, .ns-\< { background: var(--spec); border-color: var(--spec-b); }
+.steps { color: var(--muted); font-size: 13px; margin-top: 4px; overflow-wrap: anywhere; }
+.steps b { color: var(--ink); font-weight: 600; }
+.decoded { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 8px; white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 10px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+.diff { color: var(--bad); text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TurkMorph test</h1>
+  <p class="sub">Metni yaz, nasıl bölündüğünü ve decode'un kelimeleri token token nasıl geri kurduğunu gör. Sağda TurkishTokenizer 1.0.4.</p>
+  <textarea id="text">Evlerimizdekiler saatlerde geldi. Kitabımızı Danimarka'dan 2023'te getirdiler.</textarea>
+  <div class="row">
+    <button class="primary" id="go">Tokenize et</button>
+    <label class="meta"><input type="checkbox" id="ctx"> bağlam modu (B: kök cümleye göre, emin olunmayan etiket açık)</label>
+    <span class="meta">Örnekler:</span>
+    <button data-ex="Evlerimizdekiler saatlerde geldi. Kitabımızı Danimarka'dan 2023'te getirdiler.">temel</button>
+    <button data-ex="zeytinyağlarından, işbirliklerimizde, Beyoğlu'nda, Kemal'e, NATO'ya, TBMM'ye">bileşik / özel isim</button>
+    <button data-ex="ağzından hakkında reddi şehrimizde kalbimiz rengi topu suyun bana onunla">ses olayları</button>
+    <button data-ex="cocuklarimiz cok guzel, tesbit ettik malesef geliyom yapıcam nerde napıyon ikisinide">yazım / konuşma dili</button>
+    <button data-ex="The meeting was postponed; komünistlerden iPhone'u 12 34 ☃ 🙂">yabancı / sayı</button>
+  </div>
+  <div class="legend">
+    <span class="chip ns-R">R: kök</span><span class="chip ns-S">S: ek</span><span class="chip ns-L">L: LEX</span>
+    <span class="chip ns-E">E: yazım farkı</span><span class="chip ns-<">&lt;özel&gt;, rakam, noktalama</span>
+  </div>
+  <div class="grid">
+    <section class="panel" id="tm"><h2>TurkMorph</h2><div class="meta">Tokenize et'e bas.</div></section>
+    <section class="panel" id="tt"><h2>TurkishTokenizer</h2><div class="meta">—</div></section>
+  </div>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const vis = (s) => s.replace(/ /g, "␣").replace(/\n/g, "⏎");
+
+function chip(t) {
+  const ns = t.ns.startsWith("<") ? "<" : t.ns;
+  const title = `${t.tok}  id=${t.id ?? "?"}${t.help ? "\n" + t.help : ""}`;
+  return `<span class="chip ns-${esc(ns)}" title="${esc(title)}">${esc(vis(t.tok))}</span>`;
+}
+
+function diffHtml(a, b) {   // mark the first difference of decoded vs input
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  if (i === a.length && i === b.length) return esc(vis(a));
+  return esc(vis(a.slice(0, i))) + `<span class="diff">${esc(vis(a.slice(i)))}</span>`;
+}
+
+function badge(ok, okText, badText) {
+  return `<span class="badge ${ok ? "ok" : "bad"}">${ok ? okText : badText}</span>`;
+}
+
+function renderTM(r, text, vocab, ctx) {
+  const words = r.words.map((w) => {
+    const steps = w.steps.length > 1
+      ? `<div class="steps">birleşme: ${w.steps.map((s) => `<b>${esc(vis(s.surface))}</b>`).join(" → ")}</div>` : "";
+    return `<div class="word"><div class="surf">${esc(vis(w.surface)) || "&nbsp;"}</div>
+      <div class="chips">${w.tokens.map(chip).join("")}</div>${steps}</div>`;
+  }).join("");
+  $("#tm").innerHTML = `<h2>TurkMorph${ctx ? " (bağlam)" : ""} ${badge(r.lossless, "kayıpsız ✓", "fark var ✗")}
+    <span class="meta">${r.n_tokens} token · ${r.encode_ms} ms · vocab ${vocab.toLocaleString("tr")}</span></h2>
+    <div class="words">${words}</div>
+    <div class="decoded">decode: ${diffHtml(r.decoded, text)}</div>`;
+}
+
+function renderTT(r, text) {
+  if (!r) { $("#tt").innerHTML = `<h2>TurkishTokenizer</h2><div class="meta">Bu Python'da kurulu değil.</div>`; return; }
+  const loose = !r.lossless && r.lossless_loose ? " (yalnızca baştaki boşluk farklı)" : "";
+  $("#tt").innerHTML = `<h2>TurkishTokenizer ${badge(r.lossless, "kayıpsız ✓", "fark var ✗")}
+    <span class="meta">${r.n_tokens} token · ${r.encode_ms} ms${loose}</span></h2>
+    <div class="chips">${r.tokens.map(chip).join("")}</div>
+    <div class="decoded">decode: ${diffHtml(r.decoded, text)}</div>`;
+}
+
+async function run() {
+  const text = $("#text").value;
+  $("#go").disabled = true;
+  try {
+    const res = await fetch("/api/tokenize", {method: "POST", headers: {"Content-Type": "application/json"},
+                                               body: JSON.stringify({text, context: $("#ctx").checked})});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || `HTTP ${res.status}`);
+    renderTM(d.turkmorph, text, d.vocab.turkmorph, d.context);
+    renderTT(d.turkish_tokenizer, text);
+  } catch (e) {
+    $("#tm").innerHTML = `<h2>TurkMorph</h2><div class="meta">Sunucuya ulaşılamadı: ${esc(e)}</div>`;
+  } finally { $("#go").disabled = false; }
+}
+$("#go").onclick = run;
+$("#ctx").onchange = run;
+document.querySelectorAll("[data-ex]").forEach((b) => b.onclick = () => { $("#text").value = b.dataset.ex; run(); });
+$("#text").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
+run();
+</script>
+</body>
+</html>
