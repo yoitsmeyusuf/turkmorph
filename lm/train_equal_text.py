@@ -57,10 +57,12 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     ap.add_argument("--duty-cycle", type=float, default=.7)
+    ap.add_argument("--accum", type=int, default=1,
+                    help="split each batch into this many micro-batches (same update, less memory)")
     ap.add_argument("--benchmark-steps", type=int, default=0,
                     help="time this many training steps, print throughput, exit without saving")
     args = ap.parse_args()
-    if (args.batch < 1 or args.d < 64 or args.d % 64 or args.layers < 1
+    if (args.batch < 1 or args.accum < 1 or args.d < 64 or args.d % 64 or args.layers < 1
             or args.ctx < 1 or not 0 < args.duty_cycle <= 1):
         ap.error("Invalid model, batch or duty-cycle settings")
     if args.device == "cuda" and not torch.cuda.is_available():
@@ -102,12 +104,18 @@ def main():
     model.train()
     for step, start in enumerate(range(0, len(order), args.batch)):
         tick = time.perf_counter()
-        x, y, chars, tokens = text_batch(train, order[start:start + args.batch], meta["bos_id"])
-        x, y = x.to(args.device), y.to(args.device)
+        batch_indices = order[start:start + args.batch]
+        chars = int(train[2][batch_indices].sum())          # normaliser for the whole batch
+        tokens, loss = 0, 0.
         opt.zero_grad(set_to_none=True)
-        with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
-            loss = model(x, y)
-        (loss / chars).backward()
+        for micro in np.array_split(batch_indices, min(args.accum, len(batch_indices))):
+            x, y, _, micro_tokens = text_batch(train, micro, meta["bos_id"])
+            x, y = x.to(args.device), y.to(args.device)
+            with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
+                micro_loss = model(x, y)
+            (micro_loss / chars).backward()
+            loss += micro_loss.detach()
+            tokens += micro_tokens
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
         opt.step()
         schedule.step()

@@ -51,7 +51,8 @@ Her tokenizer kendi en iyi denenmiş ayarıyla; H100 üzerinde (Modal).
 Seed sapması 0,002–0,007. Model büyüdükçe fark kapanmıyor (aynı ayarda 130M → 360M:
 %15,2 → %15,7 valid). Batch parça sayısıyla verildiği için aynı batch'te BPE adım başına
 daha az token görür; bu yüzden BPE daha büyük batch ister. 130M'de batch 16/32/64/128
-taramasında morph en iyi 64'te (~21K token/adım), BPE en iyi 128'de (~25K token/adım),
+taramasında morph en iyi 64'te (~21K token/adım), BPE en iyi 128'de (~25K token/adım;
+BPE batch 256'da tekrar kötüleşiyor: 1,368 valid),
 yani ikisi de benzer token/adım'da doyuyor. En iyiye karşı en iyi fark %10,7 valid,
 %12,2 test; tek ayarlı karşılaştırmalardaki %13–16 bu yüzden üst sınır sayılmalı.
 360M model yalnız batch 16/32 ile denendi (ayarı doymadı). Tam tablo: `results/scaling-300m.md`,

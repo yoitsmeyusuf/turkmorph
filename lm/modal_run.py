@@ -69,7 +69,8 @@ def train(spec: str, benchmark_steps: int = 0) -> dict:
         cmd = [sys.executable, "-u", "/root/proj/lm/train_equal_text.py", "--data-root", f"/vol/data/{DATA}",
                "--tokenizer", run["tokenizer"], "--output-dir", str(out), "--seed", str(run["seed"]),
                "--d", str(d), "--layers", str(layers), "--batch", str(run["batch"]), "--lr", str(run["lr"]),
-               "--duty-cycle", "1", "--benchmark-steps", str(benchmark_steps)]
+               "--duty-cycle", "1", "--benchmark-steps", str(benchmark_steps),
+               "--accum", str(max(1, run["batch"] // 64))]          # micro-batches of <=64 segments (80 GB)
         started = time.monotonic()
         with (out / "train.log").open("w") as log:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
