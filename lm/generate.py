@@ -24,7 +24,11 @@ def load(model_dir, device=None):
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     model = GPT2LMHeadModel.from_pretrained(model_dir, dtype=torch.bfloat16 if device == "cuda" else torch.float32)
     tok = fast_tokenizer()
-    info = json.loads((Path(model_dir) / "turkmorph_vocab.json").read_text(encoding="utf-8"))
+    vocab_file = Path(model_dir) / "turkmorph_vocab.json"
+    if not vocab_file.exists():                                   # a Hub id, not a local folder
+        from huggingface_hub import hf_hub_download
+        vocab_file = hf_hub_download(model_dir, "turkmorph_vocab.json")
+    info = json.loads(Path(vocab_file).read_text(encoding="utf-8"))
     if list(tok.vocab.toks) != info["tokens"]:
         raise SystemExit("installed turkmorph vocabulary differs from the one the model was trained with")
     return model.to(device).eval(), tok, info["bos_id"]
