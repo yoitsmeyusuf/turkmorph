@@ -21,6 +21,7 @@ def main():
     ap.add_argument("--data-root", type=Path, default=ROOT / "data" / "lm")
     ap.add_argument("--matched-root", type=Path, default=ROOT / "data" / "lm" / "equal-text-30m")
     ap.add_argument("--source", type=Path, default=ROOT / "data" / "corpus" / "valid.txt")
+    ap.add_argument("--bpe-dir", type=Path, default=None, help="default: <data-root>/bpe")
     ap.add_argument("--output-dir", type=Path, default=ROOT / "data" / "lm" / "equal-text-test-2m")
     ap.add_argument("--test-chars", type=int, default=2_000_000)
     args = ap.parse_args()
@@ -39,8 +40,9 @@ def main():
         raise ValueError("Not enough unused text after the validation split")
     text = full[start:]
     morph = fast_tokenizer()
-    bpe = Tokenizer.from_file(str(args.data_root / "bpe" / "tokenizer.json"))
-    tokenizer_hashes = {"bpe": sha256(args.data_root / "bpe" / "tokenizer.json"),
+    bpe_dir = args.bpe_dir or args.data_root / "bpe"
+    bpe = Tokenizer.from_file(str(bpe_dir / "tokenizer.json"))
+    tokenizer_hashes = {"bpe": sha256(bpe_dir / "tokenizer.json"),
                         "morph_vocab": hashlib.sha256(json.dumps(morph.vocab.toks,
                             ensure_ascii=False).encode()).hexdigest()}
     if tokenizer_hashes != matched["tokenizer_sha256"]:

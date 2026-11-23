@@ -35,6 +35,27 @@ Python ≥ 3.10 ile hazır gelir; diğer platformlarda pip kaynak koddan derler 
 
 ## Dil modeli karşılaştırması: Morph vs BPE
 
+### Ölçekleme (130M ve 360M parametre, 300M karakter)
+
+Aynı GPT, aynı 300M karakterlik BellaTurca metni, aynı parçalar ve aynı sıra; sözlük boyutu
+eşit (58.667, güncel IMST'siz tablolar). BPE aynı 300M karakterle eğitilmiş byte-level BPE.
+Değerler karakter başına bit (BPC, düşük daha iyi): doğrulama / hiç görülmemiş test metni.
+Her tokenizer kendi en iyi denenmiş ayarıyla; H100 üzerinde (Modal).
+
+| Model | Ayar (batch, lr) | Morph valid / test | BPE valid / test | Morph avantajı (valid / test) |
+|---|---|---|---|---|
+| 130M (d768, 12 katman), 3 seed | 32, 1e-3 | 1,168 / 1,525 | 1,344 / 1,774 | %13,1 / %14,0 |
+| 130M, tek seed | 64, 1,5e-3 | 1,146 / 1,505 | 1,300 / 1,735 | %11,8 / %13,2 |
+| 360M (d1024, 24 katman), tek seed | 32, 6e-4 | 1,153 / 1,516 | 1,359 / 1,779 | %15,2 / %14,8 |
+
+Seed sapması 0,002–0,007. Model büyüdükçe fark kapanmıyor (aynı ayarda 130M → 360M:
+%15,2 → %15,7 valid). Ancak BPE büyük batch'ten morph'tan daha çok kazanıyor
+(130M'de batch 16 → 64: fark %15,2 → %11,8); ayar araması henüz doymadı, bu yüzden
+kesin fark bu aralığın altında olabilir. Tam tablo: `results/scaling-300m.md`,
+kod: `lm/modal_run.py`, `lm/prepare_bpe_v2.py`, `scripts/prepare_scaling.sh`.
+
+### Küçük model (33M parametre)
+
 Aynı GPT (6 katman, 384 boyut, 33M parametre), aynı sözlük boyutu ve aynı
 BellaTurca metni; BPE aynı metinle eğitilmiş byte-level BPE. Değerler karakter başına
 bit (BPC, düşük daha iyi), eğitimde hiç kullanılmamış test metninde; aksi belirtilmedikçe
@@ -48,10 +69,10 @@ bit (BPC, düşük daha iyi), eğitimde hiç kullanılmamış test metninde; aks
 | Uzun bağlam (~2.800 karakterlik parçalar) | 2,076 | 2,421 | %14,2 |
 | Eşit metin, 100M karakter (tek seed) | 1,887 | 2,308 | %18,2 |
 
-Bu ölçümler IMST'nin henüz çıkarılmadığı önceki tablolarla (sözlük 58.723) yapıldı;
-IMST'siz tablolarda UD test kök doğruluğu %93,94 → %93,91 değişti.
-Sınırlar: tek model boyutu, tek derlem, en fazla 100M karakter. Morph aynı metin için
-yaklaşık 1,8 kat token üretir; çıkarım maliyeti buna göre yüksektir. Deney kodu `lm/`,
+Bu küçük model ölçümleri IMST'nin henüz çıkarılmadığı önceki tablolarla (sözlük 58.723)
+yapıldı; yukarıdaki ölçekleme deneyi güncel tablolarla yapıldı.
+Sınırlar: tek derlem; eşit hesaplama karşılaştırması yalnız küçük modelde. Morph aynı metin için
+yaklaşık 1,7–1,8 kat token üretir; çıkarım maliyeti buna göre yüksektir. Deney kodu `lm/`,
 protokol ayrıntıları aşağıda.
 
 ```

@@ -1,0 +1,221 @@
+{
+  "groups": [
+    {
+      "size": "M",
+      "setting": "b16-lr6e-4",
+      "seeds": 1,
+      "morph_valid": 1.1997354944106695,
+      "morph_valid_sd": null,
+      "morph_test": 1.545468113400405,
+      "morph_test_sd": null,
+      "bpe_valid": 1.4142829742272007,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.8237427611021624,
+      "bpe_test_sd": null,
+      "gain_valid": 0.1517005321610163,
+      "gain_test": 0.1525843740888022
+    },
+    {
+      "size": "M",
+      "setting": "b32-lr1e-3",
+      "seeds": 3,
+      "morph_valid": 1.1679581602839766,
+      "morph_valid_sd": 0.0020999085363568436,
+      "morph_test": 1.5250941627714774,
+      "morph_test_sd": 0.002661991812988739,
+      "bpe_valid": 1.344210425541142,
+      "bpe_valid_sd": 0.00711319866821381,
+      "bpe_test": 1.7738812666984007,
+      "bpe_test_sd": 0.007164753831197177,
+      "gain_valid": 0.13111954937130554,
+      "gain_test": 0.14025014446991324
+    },
+    {
+      "size": "M",
+      "setting": "b64-lr1.5e-3",
+      "seeds": 1,
+      "morph_valid": 1.1460515162037668,
+      "morph_valid_sd": null,
+      "morph_test": 1.5054025442948509,
+      "morph_test_sd": null,
+      "bpe_valid": 1.3000146781814144,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.7345899779895495,
+      "bpe_test_sd": null,
+      "gain_valid": 0.11843186431789066,
+      "gain_test": 0.132127728513879
+    },
+    {
+      "size": "L",
+      "setting": "b16-lr3e-4",
+      "seeds": 1,
+      "morph_valid": 1.1755946789642786,
+      "morph_valid_sd": null,
+      "morph_test": 1.5304206187600022,
+      "morph_test_sd": null,
+      "bpe_valid": 1.3942781001927067,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.8108512664417664,
+      "bpe_test_sd": null,
+      "gain_valid": 0.15684347419514322,
+      "gain_test": 0.15486122625233412
+    },
+    {
+      "size": "L",
+      "setting": "b32-lr6e-4",
+      "seeds": 1,
+      "morph_valid": 1.1526681179742049,
+      "morph_valid_sd": null,
+      "morph_test": 1.5159471483476488,
+      "morph_test_sd": null,
+      "bpe_valid": 1.3589500780864878,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.7794054099144645,
+      "bpe_test_sd": null,
+      "gain_valid": 0.15179509787640233,
+      "gain_test": 0.1480597170823933
+    }
+  ],
+  "runs": {
+    "L-bpe-b16-lr3e-4-s0": {
+      "size": "L",
+      "tokenizer": "bpe",
+      "setting": "b16-lr3e-4",
+      "seed": 0,
+      "valid_bpc": 1.3942781001927067,
+      "test_bpc": 1.8108512664417664,
+      "train_tokens": 57355015,
+      "train_min": 12.3
+    },
+    "L-bpe-b32-lr6e-4-s0": {
+      "size": "L",
+      "tokenizer": "bpe",
+      "setting": "b32-lr6e-4",
+      "seed": 0,
+      "valid_bpc": 1.3589500780864878,
+      "test_bpc": 1.7794054099144645,
+      "train_tokens": 57355015,
+      "train_min": 10.8
+    },
+    "L-morph-b16-lr3e-4-s0": {
+      "size": "L",
+      "tokenizer": "morph",
+      "setting": "b16-lr3e-4",
+      "seed": 0,
+      "valid_bpc": 1.1755946789642786,
+      "test_bpc": 1.5304206187600022,
+      "train_tokens": 95688648,
+      "train_min": 17.7
+    },
+    "L-morph-b32-lr6e-4-s0": {
+      "size": "L",
+      "tokenizer": "morph",
+      "setting": "b32-lr6e-4",
+      "seed": 0,
+      "valid_bpc": 1.1526681179742049,
+      "test_bpc": 1.5159471483476488,
+      "train_tokens": 95688648,
+      "train_min": 16.3
+    },
+    "M-bpe-b16-lr6e-4-s0": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b16-lr6e-4",
+      "seed": 0,
+      "valid_bpc": 1.4142829742272007,
+      "test_bpc": 1.8237427611021624,
+      "train_tokens": 57355015,
+      "train_min": 6.2
+    },
+    "M-bpe-b32-lr1e-3-s0": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b32-lr1e-3",
+      "seed": 0,
+      "valid_bpc": 1.348890715874814,
+      "test_bpc": 1.7794542726911147,
+      "train_tokens": 57355015,
+      "train_min": 5.7
+    },
+    "M-bpe-b32-lr1e-3-s1": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b32-lr1e-3",
+      "seed": 1,
+      "valid_bpc": 1.3360248755903854,
+      "test_bpc": 1.765799492168351,
+      "train_tokens": 57355015,
+      "train_min": 5.6
+    },
+    "M-bpe-b32-lr1e-3-s2": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b32-lr1e-3",
+      "seed": 2,
+      "valid_bpc": 1.3477156851582264,
+      "test_bpc": 1.7763900352357362,
+      "train_tokens": 57355015,
+      "train_min": 5.7
+    },
+    "M-bpe-b64-lr1.5e-3-s0": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b64-lr1.5e-3",
+      "seed": 0,
+      "valid_bpc": 1.3000146781814144,
+      "test_bpc": 1.7345899779895495,
+      "train_tokens": 57355015,
+      "train_min": 5.5
+    },
+    "M-morph-b16-lr6e-4-s0": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b16-lr6e-4",
+      "seed": 0,
+      "valid_bpc": 1.1997354944106695,
+      "test_bpc": 1.545468113400405,
+      "train_tokens": 95688648,
+      "train_min": 9.0
+    },
+    "M-morph-b32-lr1e-3-s0": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b32-lr1e-3",
+      "seed": 0,
+      "valid_bpc": 1.1686157763262577,
+      "test_bpc": 1.522451937555993,
+      "train_tokens": 95688648,
+      "train_min": 8.5
+    },
+    "M-morph-b32-lr1e-3-s1": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b32-lr1e-3",
+      "seed": 1,
+      "valid_bpc": 1.1696505577736056,
+      "test_bpc": 1.5277754903789211,
+      "train_tokens": 95688648,
+      "train_min": 8.5
+    },
+    "M-morph-b32-lr1e-3-s2": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b32-lr1e-3",
+      "seed": 2,
+      "valid_bpc": 1.1656081467520665,
+      "test_bpc": 1.5250550603795177,
+      "train_tokens": 95688648,
+      "train_min": 8.6
+    },
+    "M-morph-b64-lr1.5e-3-s0": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b64-lr1.5e-3",
+      "seed": 0,
+      "valid_bpc": 1.1460515162037668,
+      "test_bpc": 1.5054025442948509,
+      "train_tokens": 95688648,
+      "train_min": 8.4
+    }
+  }
+}

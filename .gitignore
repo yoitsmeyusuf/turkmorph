@@ -38,3 +38,6 @@ turkmorph_prototype.zip
 turkmorph/data/
 dist/
 .vscode/
+
+# local run logs
+logs/

@@ -81,6 +81,7 @@ def write_split(text, split, output, encode, decode, max_tokens, chunk_chars):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--data-root", type=Path, default=ROOT / "data" / "lm")
+    ap.add_argument("--bpe-dir", type=Path, default=None, help="default: <data-root>/bpe")
     ap.add_argument("--output-dir", type=Path, default=ROOT / "data" / "lm" / "equal-text-30m")
     ap.add_argument("--train-chars", type=int, default=30_000_000)
     ap.add_argument("--max-tokens", type=int, default=512)
@@ -93,7 +94,7 @@ def main():
     from tokenizers import Tokenizer
     from turkmorph.fast import fast_tokenizer
 
-    bpe_dir = args.data_root / "bpe"
+    bpe_dir = args.bpe_dir or args.data_root / "bpe"
     bpe_meta = json.loads((bpe_dir / "meta.json").read_text())
     for split in ("train", "valid"):
         if sha256(bpe_dir / f"reference_{split}.txt") != bpe_meta["reference_text"][split]["sha256"]:

@@ -57,13 +57,15 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     ap.add_argument("--duty-cycle", type=float, default=.7)
+    ap.add_argument("--benchmark-steps", type=int, default=0,
+                    help="time this many training steps, print throughput, exit without saving")
     args = ap.parse_args()
     if (args.batch < 1 or args.d < 64 or args.d % 64 or args.layers < 1
             or args.ctx < 1 or not 0 < args.duty_cycle <= 1):
         ap.error("Invalid model, batch or duty-cycle settings")
     if args.device == "cuda" and not torch.cuda.is_available():
         ap.error("CUDA is unavailable here; use the GPU-enabled WSL terminal")
-    if (args.output_dir / "model.pt").exists():
+    if (args.output_dir / "model.pt").exists() and not args.benchmark_steps:
         ap.error("Refusing to overwrite an existing checkpoint")
     torch.manual_seed(args.seed)
     torch.set_num_threads(min(8, torch.get_num_threads()))
@@ -112,6 +114,16 @@ def main():
         seen_chars += chars
         seen_tokens += tokens
         pace_step(tick, args.duty_cycle, args.device)
+        if args.benchmark_steps and step + 1 == args.benchmark_steps:
+            if args.device == "cuda":
+                torch.cuda.synchronize()
+            elapsed = time.monotonic() - started
+            print(json.dumps({"benchmark_steps": step + 1, "seconds": round(elapsed, 2),
+                              "chars_per_s": round(seen_chars / elapsed), "tokens_per_s": round(seen_tokens / elapsed),
+                              "full_run_estimate_min": round(elapsed / (step + 1) * steps / 60, 1),
+                              "peak_mem_gb": round(torch.cuda.max_memory_allocated() / 2**30, 2)
+                              if args.device == "cuda" else None}), flush=True)
+            return
         if step % 50 == 0 or step + 1 == steps:
             elapsed = time.monotonic() - started
             eta = elapsed / (step + 1) * (steps - step - 1) / 60
