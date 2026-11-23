@@ -17,7 +17,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from lm.model import GPT, bpc, n_params
+from lm.model import GPT, Hourglass, bpc, n_params
 from lm.train import learning_rate_scale, pace_step
 
 
@@ -29,6 +29,22 @@ def load_split(root, name, split):
             or np.any(np.diff(offsets) <= 0) or np.any(chars <= 0)):
         raise ValueError(f"Invalid segment boundaries: {name}/{split}")
     return ids, offsets, chars
+
+
+def build_model(config, meta, data_root):
+    """GPT or Hourglass from a run config (dict); used by training and evaluation."""
+    if config.get("arch", "gpt") == "gpt":
+        return GPT(meta["vocab_size"], config["d"], config["layers"], config["d"] // 64, config["ctx"])
+    wclass_path = Path(data_root) / "morph" / "word_classes.npy"
+    wclass = np.zeros(meta["vocab_size"], dtype=np.uint8)
+    if wclass_path.exists():
+        loaded = np.load(wclass_path)
+        wclass[:len(loaded)] = loaded
+    elif config["tokenizer"] != "morph":
+        raise ValueError("Hourglass word groups are only defined for morph tokens")
+    return Hourglass(meta["vocab_size"], config["d"], config["n_pre"], config["n_mid"], config["n_post"],
+                     config["d"] // 64, config["ctx"], config.get("d_mid") or None, wclass,
+                     config.get("pool", "last_mean"), config.get("in_word_pos", True))
 
 
 def text_batch(split, indices, bos):
@@ -57,6 +73,13 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     ap.add_argument("--duty-cycle", type=float, default=.7)
+    ap.add_argument("--arch", choices=["gpt", "hourglass"], default="gpt")
+    ap.add_argument("--n-pre", type=int, default=4, help="hourglass: token blocks before the word stack")
+    ap.add_argument("--n-mid", type=int, default=16, help="hourglass: word-level blocks")
+    ap.add_argument("--n-post", type=int, default=4, help="hourglass: token blocks after the word stack")
+    ap.add_argument("--d-mid", type=int, default=0, help="hourglass: word-stack width (0 = d)")
+    ap.add_argument("--pool", choices=["sum", "last_mean"], default="last_mean")
+    ap.add_argument("--no-in-word-pos", dest="in_word_pos", action="store_false")
     ap.add_argument("--accum", type=int, default=1,
                     help="split each batch into this many micro-batches (same update, less memory)")
     ap.add_argument("--benchmark-steps", type=int, default=0,
@@ -84,7 +107,9 @@ def main():
     order = np.random.default_rng(args.seed).permutation(len(train[2]))
     order_hash = hashlib.sha256(order.astype("<i8").tobytes()).hexdigest()
     steps = (len(order) + args.batch - 1) // args.batch
-    model = GPT(meta["vocab_size"], args.d, args.layers, args.d // 64, args.ctx).to(args.device)
+    if args.arch == "hourglass" and (args.tokenizer != "morph" or not (args.data_root / "morph" / "word_classes.npy").exists()):
+        ap.error("Hourglass needs morph data with morph/word_classes.npy (lm/add_word_classes.py)")
+    model = build_model(vars(args), meta, args.data_root).to(args.device)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(.9, .95), weight_decay=.1,
                             fused=args.device == "cuda")
     schedule = torch.optim.lr_scheduler.LambdaLR(opt, lambda s: learning_rate_scale(s, steps))

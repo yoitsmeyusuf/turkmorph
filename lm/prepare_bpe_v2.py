@@ -26,6 +26,7 @@ from lm.prepare import read_chars, train_bpe
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--train-chars", type=float, default=300e6)
+    ap.add_argument("--train-source", type=Path, default=ROOT / "data" / "corpus" / "train.txt")
     ap.add_argument("--valid-reference", type=Path, default=ROOT / "data" / "lm" / "bpe" / "reference_valid.txt")
     ap.add_argument("--output-dir", type=Path, default=ROOT / "data" / "lm" / "bpe-v2")
     args = ap.parse_args()
@@ -36,7 +37,7 @@ def main():
     staging = args.output_dir.with_name(args.output_dir.name + f".preparing-{os.getpid()}")
     staging.mkdir(parents=True)
     started = time.monotonic()
-    train_text = "".join(read_chars(ROOT / "data" / "corpus" / "train.txt", args.train_chars))
+    train_text = "".join(read_chars(args.train_source, args.train_chars))
     (staging / "reference_train.txt").write_text(train_text, encoding="utf-8")
     shutil.copyfile(args.valid_reference, staging / "reference_valid.txt")
     valid_text = (staging / "reference_valid.txt").read_text(encoding="utf-8")
@@ -50,7 +51,7 @@ def main():
     meta = {"vocab_size": vocab, "train_chars": len(train_text), "valid_chars": len(valid_text),
             "reference_text": {s: {"chars": len(t), "sha256": sha256(staging / f"reference_{s}.txt")}
                                for s, t in (("train", train_text), ("valid", valid_text))},
-            "reference_dataset": "data/corpus/train.txt prefix", "lossless": True,
+            "reference_dataset": f"{args.train_source} prefix", "lossless": True,
             "build_s": time.monotonic() - started}
     (staging / "meta.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     staging.rename(args.output_dir)

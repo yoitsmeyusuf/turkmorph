@@ -20,10 +20,12 @@ import modal
 
 ROOT = Path(__file__).resolve().parents[1]
 GPU = "H100"
-DATA = "equal-text-300m"
-TEST = "equal-text-300m-test"
-EXPERIMENT = "scaling-300m"
 SIZES = {"S": (384, 6), "M": (768, 12), "L": (1024, 24)}
+HG = ["--arch", "hourglass", "--n-pre", "4", "--n-mid", "16", "--n-post", "4"]
+ARCH = {"HL": ("L", HG), "HLW": ("L", HG + ["--d-mid", "1408"])}       # hourglass at L width
+# long-context experiment on the HF corpus (Wikipedia-tr + FineWeb-2, 1B chars, <=2048 tokens/segment)
+DATASETS = {"bellaturca-300m": ("equal-text-300m", "equal-text-300m-test", "scaling-300m", 512),
+            "hf-1b-long": ("equal-text-hf-1b-long", "equal-text-hf-test-long", "hf-1b-long", 2048)}
 PLANS = {
     "bench": ["M-morph-b16-lr6e-4-s0", "M-bpe-b16-lr6e-4-s0", "L-morph-b16-lr3e-4-s0"],
     "M": ["M-morph-b16-lr6e-4-s0", "M-bpe-b16-lr6e-4-s0"],
@@ -37,6 +39,8 @@ PLANS = {
                "M-morph-b32-lr1e-3-s1", "M-bpe-b32-lr1e-3-s1",
                "M-morph-b32-lr1e-3-s2", "M-bpe-b32-lr1e-3-s2"],
     # phase 3: where does the batch trend saturate?
+    "hg-bench": ["L-morph-b16-lr8e-4-s0", "HL-morph-b16-lr8e-4-s0", "HLW-morph-b16-lr8e-4-s0"],
+    "hg": ["L-morph-b16-lr8e-4-s0", "HL-morph-b16-lr8e-4-s0", "HLW-morph-b16-lr8e-4-s0"],
     "b128": ["M-morph-b128-lr2e-3-s0", "M-bpe-b128-lr2e-3-s0",
              "M-morph-b128-lr3e-3-s0", "M-bpe-b128-lr3e-3-s0"],
 }
@@ -56,21 +60,24 @@ def parse(spec):
 
 
 @app.function(image=image, gpu=GPU, volumes={"/vol": volume}, timeout=8 * 3600)
-def train(spec: str, benchmark_steps: int = 0) -> dict:
+def train(spec: str, benchmark_steps: int = 0, dataset: str = "bellaturca-300m") -> dict:
     run = parse(spec)
-    d, layers = SIZES[run["size"]]
-    out = Path("/vol/runs") / EXPERIMENT / (spec + ("-bench" if benchmark_steps else ""))
+    data, test_data, experiment, ctx = DATASETS[dataset]
+    size, extra = ARCH.get(run["size"], (run["size"], []))
+    d, layers = SIZES[size]
+    out = Path("/vol/runs") / experiment / (spec + ("-bench" if benchmark_steps else ""))
     if not benchmark_steps and (out / "result.json").exists() and (out / "test_result.json").exists():
         print(f"{spec}: already done", flush=True)
     else:
         if out.exists():                                   # partial run from a preempted container
             subprocess.run(["rm", "-rf", str(out)], check=True)
         out.mkdir(parents=True)
-        cmd = [sys.executable, "-u", "/root/proj/lm/train_equal_text.py", "--data-root", f"/vol/data/{DATA}",
+        cmd = [sys.executable, "-u", "/root/proj/lm/train_equal_text.py", "--data-root", f"/vol/data/{data}",
                "--tokenizer", run["tokenizer"], "--output-dir", str(out), "--seed", str(run["seed"]),
                "--d", str(d), "--layers", str(layers), "--batch", str(run["batch"]), "--lr", str(run["lr"]),
                "--duty-cycle", "1", "--benchmark-steps", str(benchmark_steps),
-               "--accum", str(max(1, run["batch"] // 64))]          # micro-batches of <=64 segments (80 GB)
+               "--ctx", str(ctx), *extra,
+               "--accum", str(max(1, run["batch"] * ctx // 32768))]   # micro-batches of <=32K token slots (80 GB)
         started = time.monotonic()
         with (out / "train.log").open("w") as log:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -86,7 +93,7 @@ def train(spec: str, benchmark_steps: int = 0) -> dict:
         if not benchmark_steps:
             sys.path.insert(0, "/root/proj")
             from lm.eval_equal_text import evaluate
-            test_root = Path(f"/vol/data/{TEST}")
+            test_root = Path(f"/vol/data/{test_data}")
             meta = json.loads((test_root / "meta.json").read_text())
             test = evaluate(out, test_root, meta, "cuda", run["batch"])
             test["valid_bpc"] = json.loads((out / "result.json").read_text())["valid_bpc"]
@@ -98,18 +105,20 @@ def train(spec: str, benchmark_steps: int = 0) -> dict:
 
 
 @app.local_entrypoint()
-def main(plan: str = "", runs: str = "", benchmark_steps: int = 0):
+def main(plan: str = "", runs: str = "", benchmark_steps: int = 0, dataset: str = ""):
     specs = PLANS[plan] if plan else [s for s in runs.split(",") if s]
-    if plan == "bench" and not benchmark_steps:
+    dataset = dataset or ("hf-1b-long" if plan.startswith("hg") else "bellaturca-300m")
+    if plan.endswith("bench") and not benchmark_steps:
         benchmark_steps = 300
     started = time.monotonic()
-    print(f"{len(specs)} runs on {GPU}: {', '.join(specs)}", flush=True)
-    for res in train.map(specs, kwargs={"benchmark_steps": benchmark_steps}, return_exceptions=True):
+    print(f"{len(specs)} runs on {GPU}, data {dataset}: {', '.join(specs)}", flush=True)
+    for res in train.map(specs, kwargs={"benchmark_steps": benchmark_steps, "dataset": dataset},
+                         return_exceptions=True):
         if isinstance(res, Exception):
             print("FAILED:", res, flush=True)
             continue
         name = res["spec"] + ("-bench" if benchmark_steps else "")
-        local = ROOT / "data" / "lm" / "experiments" / EXPERIMENT / name
+        local = ROOT / "data" / "lm" / "experiments" / DATASETS[dataset][2] / name
         local.mkdir(parents=True, exist_ok=True)
         for fname, text in res["files"].items():
             (local / fname).write_text(text)

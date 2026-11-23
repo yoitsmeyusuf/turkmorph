@@ -11,7 +11,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from lm.train_equal_text import load_split, text_batch        # sets the CUDA allocator option before torch
+from lm.train_equal_text import build_model, load_split, text_batch        # sets the CUDA allocator option before torch
 import torch
 from lm.model import GPT, bpc
 
@@ -26,8 +26,8 @@ def evaluate(run_dir, test_root, meta, device, batch):
     split = load_split(test_root, config["tokenizer"], "test")
     if int(np.diff(split[1]).max()) > config["ctx"]:
         raise ValueError("A test segment exceeds model context")
-    model = GPT(meta["vocab_size"], config["d"], config["layers"], config["d"] // 64, config["ctx"])
-    model.load_state_dict(saved["model_state"])
+    model = build_model(config, meta, config["data_root"])
+    model.load_state_dict(saved["model_state"])                 # also restores the word-class table
     model.to(device).eval()
     amp = device == "cuda" and torch.cuda.is_bf16_supported()
     total, chars_seen, tokens_seen = 0., 0, 0
