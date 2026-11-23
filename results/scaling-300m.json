@@ -46,6 +46,36 @@
       "gain_test": 0.132127728513879
     },
     {
+      "size": "M",
+      "setting": "b128-lr2e-3",
+      "seeds": 1,
+      "morph_valid": 1.1537647639056368,
+      "morph_valid_sd": null,
+      "morph_test": 1.5169954771379928,
+      "morph_test_sd": null,
+      "bpe_valid": 1.2830533332539182,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.714395957859339,
+      "bpe_test_sd": null,
+      "gain_valid": 0.10076632513817341,
+      "gain_test": 0.1151428757262285
+    },
+    {
+      "size": "M",
+      "setting": "b128-lr3e-3",
+      "seeds": 1,
+      "morph_valid": 1.1949669019688567,
+      "morph_valid_sd": null,
+      "morph_test": 1.5609090267677552,
+      "morph_test_sd": null,
+      "bpe_valid": 1.3708052249201212,
+      "bpe_valid_sd": null,
+      "bpe_test": 1.800711292381253,
+      "bpe_test_sd": null,
+      "gain_valid": 0.1282737472506431,
+      "gain_test": 0.133170856776482
+    },
+    {
       "size": "L",
       "setting": "b16-lr3e-4",
       "seeds": 1,
@@ -117,6 +147,26 @@
       "train_tokens": 95688648,
       "train_min": 16.3
     },
+    "M-bpe-b128-lr2e-3-s0": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b128-lr2e-3",
+      "seed": 0,
+      "valid_bpc": 1.2830533332539182,
+      "test_bpc": 1.714395957859339,
+      "train_tokens": 57355015,
+      "train_min": 5.6
+    },
+    "M-bpe-b128-lr3e-3-s0": {
+      "size": "M",
+      "tokenizer": "bpe",
+      "setting": "b128-lr3e-3",
+      "seed": 0,
+      "valid_bpc": 1.3708052249201212,
+      "test_bpc": 1.800711292381253,
+      "train_tokens": 57355015,
+      "train_min": 5.5
+    },
     "M-bpe-b16-lr6e-4-s0": {
       "size": "M",
       "tokenizer": "bpe",
@@ -166,6 +216,26 @@
       "test_bpc": 1.7345899779895495,
       "train_tokens": 57355015,
       "train_min": 5.5
+    },
+    "M-morph-b128-lr2e-3-s0": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b128-lr2e-3",
+      "seed": 0,
+      "valid_bpc": 1.1537647639056368,
+      "test_bpc": 1.5169954771379928,
+      "train_tokens": 95688648,
+      "train_min": 8.5
+    },
+    "M-morph-b128-lr3e-3-s0": {
+      "size": "M",
+      "tokenizer": "morph",
+      "setting": "b128-lr3e-3",
+      "seed": 0,
+      "valid_bpc": 1.1949669019688567,
+      "test_bpc": 1.5609090267677552,
+      "train_tokens": 95688648,
+      "train_min": 8.5
     },
     "M-morph-b16-lr6e-4-s0": {
       "size": "M",

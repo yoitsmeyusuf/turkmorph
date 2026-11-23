@@ -30,7 +30,7 @@ def main():
              "| Model | Setting | Seeds | Morph valid / test | BPE valid / test | Morph better (valid / test) |",
              "| --- | --- | ---: | --- | --- | --- |"]
     table = []
-    for (size, setting), by in sorted(groups.items(), key=lambda kv: ("SML".index(kv[0][0]), kv[0][1])):
+    for (size, setting), by in sorted(groups.items(), key=lambda kv: ("SML".index(kv[0][0]), int(kv[0][1].split("-")[0][1:]), kv[0][1])):
         if set(by) != {"morph", "bpe"}:
             continue
         row = {"size": size, "setting": setting, "seeds": min(len(by["morph"]), len(by["bpe"]))}

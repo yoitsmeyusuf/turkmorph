@@ -45,13 +45,16 @@ Her tokenizer kendi en iyi denenmiş ayarıyla; H100 üzerinde (Modal).
 | Model | Ayar (batch, lr) | Morph valid / test | BPE valid / test | Morph avantajı (valid / test) |
 |---|---|---|---|---|
 | 130M (d768, 12 katman), 3 seed | 32, 1e-3 | 1,168 / 1,525 | 1,344 / 1,774 | %13,1 / %14,0 |
-| 130M, tek seed | 64, 1,5e-3 | 1,146 / 1,505 | 1,300 / 1,735 | %11,8 / %13,2 |
+| 130M, her biri en iyi ayarında, tek seed | morph 64, 1,5e-3; BPE 128, 2e-3 | 1,146 / 1,505 | 1,283 / 1,714 | **%10,7 / %12,2** |
 | 360M (d1024, 24 katman), tek seed | 32, 6e-4 | 1,153 / 1,516 | 1,359 / 1,779 | %15,2 / %14,8 |
 
 Seed sapması 0,002–0,007. Model büyüdükçe fark kapanmıyor (aynı ayarda 130M → 360M:
-%15,2 → %15,7 valid). Ancak BPE büyük batch'ten morph'tan daha çok kazanıyor
-(130M'de batch 16 → 64: fark %15,2 → %11,8); ayar araması henüz doymadı, bu yüzden
-kesin fark bu aralığın altında olabilir. Tam tablo: `results/scaling-300m.md`,
+%15,2 → %15,7 valid). Batch parça sayısıyla verildiği için aynı batch'te BPE adım başına
+daha az token görür; bu yüzden BPE daha büyük batch ister. 130M'de batch 16/32/64/128
+taramasında morph en iyi 64'te (~21K token/adım), BPE en iyi 128'de (~25K token/adım),
+yani ikisi de benzer token/adım'da doyuyor. En iyiye karşı en iyi fark %10,7 valid,
+%12,2 test; tek ayarlı karşılaştırmalardaki %13–16 bu yüzden üst sınır sayılmalı.
+360M model yalnız batch 16/32 ile denendi (ayarı doymadı). Tam tablo: `results/scaling-300m.md`,
 kod: `lm/modal_run.py`, `lm/prepare_bpe_v2.py`, `scripts/prepare_scaling.sh`.
 
 ### Küçük model (33M parametre)

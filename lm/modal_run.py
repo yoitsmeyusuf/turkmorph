@@ -36,6 +36,9 @@ PLANS = {
                "M-morph-b64-lr1.5e-3-s0", "M-bpe-b64-lr1.5e-3-s0",
                "M-morph-b32-lr1e-3-s1", "M-bpe-b32-lr1e-3-s1",
                "M-morph-b32-lr1e-3-s2", "M-bpe-b32-lr1e-3-s2"],
+    # phase 3: where does the batch trend saturate?
+    "b128": ["M-morph-b128-lr2e-3-s0", "M-bpe-b128-lr2e-3-s0",
+             "M-morph-b128-lr3e-3-s0", "M-bpe-b128-lr3e-3-s0"],
 }
 
 app = modal.App("turkmorph-lm")
