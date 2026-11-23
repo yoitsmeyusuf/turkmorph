@@ -58,6 +58,22 @@ yani ikisi de benzer token/adım'da doyuyor. En iyiye karşı en iyi fark %10,7 
 360M model yalnız batch 16/32 ile denendi (ayarı doymadı). Tam tablo: `results/scaling-300m.md`,
 kod: `lm/modal_run.py`, `lm/prepare_bpe_v2.py`, `scripts/prepare_scaling.sh`.
 
+### Hourglass: sözcüğü orta katmanlarda tek pozisyona sıkıştırmak
+
+360M parametre, 2048 bağlam, 1 milyar karakter Wikipedia-tr + FineWeb-2 (test: FineWeb-2 resmi
+test kümesi), morph tokenları. Hourglass = 4 token bloğu + 16 sözcük bloğu + 4 token bloğu;
+sözcük grupları turkmorph `group_flags` kuralıyla, ek sırası için sözcük içi konum ve
+"son token + ortalama" havuzu (küçük ölçek ablasyonunda en iyisi).
+
+| Model | Eğitim süresi (H100) | Valid BPC | Test BPC |
+|---|---:|---:|---:|
+| Düz GPT, 24 blok | 54,4 dk | **1,185** | **1,158** |
+| Hourglass 4+16+4 | 43,9 dk | 1,219 (+%2,9) | 1,191 (+%2,9) |
+
+Eşit parametrede hourglass %19 daha hızlı ama %2,9 daha kötü; küçük ölçekteki %0,4'lük
+kazanç büyük modelde tersine döndü. Tek seed. Ayrıntı: `results/hf-1b-long.md`,
+`results/hourglass-ablation-30m.md`.
+
 ### Küçük model (33M parametre)
 
 Aynı GPT (6 katman, 384 boyut, 33M parametre), aynı sözlük boyutu ve aynı
