@@ -25,6 +25,8 @@ HG = ["--arch", "hourglass", "--n-pre", "4", "--n-mid", "16", "--n-post", "4"]
 ARCH = {"HL": ("L", HG), "HLW": ("L", HG + ["--d-mid", "1408"])}       # hourglass at L width
 # long-context experiment on the HF corpus (Wikipedia-tr + FineWeb-2, 1B chars, <=2048 tokens/segment)
 DATASETS = {"bellaturca-300m": ("equal-text-300m", "equal-text-300m-test", "scaling-300m", 512),
+            # data axis: same 1B-char data, train on a 300M-char prefix of the seed order
+            "hf-300m-long": ("equal-text-hf-1b-long", "equal-text-hf-test-long", "hf-300m-long", 2048, 300_000_000),
             "hf-1b-long": ("equal-text-hf-1b-long", "equal-text-hf-test-long", "hf-1b-long", 2048)}
 PLANS = {
     "bench": ["M-morph-b16-lr6e-4-s0", "M-bpe-b16-lr6e-4-s0", "L-morph-b16-lr3e-4-s0"],
@@ -62,7 +64,7 @@ def parse(spec):
 @app.function(image=image, gpu=GPU, volumes={"/vol": volume}, timeout=8 * 3600)
 def train(spec: str, benchmark_steps: int = 0, dataset: str = "bellaturca-300m") -> dict:
     run = parse(spec)
-    data, test_data, experiment, ctx = DATASETS[dataset]
+    data, test_data, experiment, ctx, *limit = DATASETS[dataset]
     size, extra = ARCH.get(run["size"], (run["size"], []))
     d, layers = SIZES[size]
     out = Path("/vol/runs") / experiment / (spec + ("-bench" if benchmark_steps else ""))
@@ -77,6 +79,7 @@ def train(spec: str, benchmark_steps: int = 0, dataset: str = "bellaturca-300m")
                "--d", str(d), "--layers", str(layers), "--batch", str(run["batch"]), "--lr", str(run["lr"]),
                "--duty-cycle", "1", "--benchmark-steps", str(benchmark_steps),
                "--ctx", str(ctx), *extra,
+               *(["--train-chars", str(limit[0])] if limit else []),
                "--accum", str(max(1, run["batch"] * ctx // 32768))]   # micro-batches of <=32K token slots (80 GB)
         started = time.monotonic()
         with (out / "train.log").open("w") as log:

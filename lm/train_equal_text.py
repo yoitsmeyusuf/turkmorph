@@ -82,6 +82,9 @@ def main():
     ap.add_argument("--no-in-word-pos", dest="in_word_pos", action="store_false")
     ap.add_argument("--accum", type=int, default=1,
                     help="split each batch into this many micro-batches (same update, less memory)")
+    ap.add_argument("--train-chars", type=int, default=0,
+                    help="train on the shortest prefix of the seed order holding >= this many characters "
+                         "(same segments for every tokenizer); 0 = all")
     ap.add_argument("--benchmark-steps", type=int, default=0,
                     help="time this many training steps, print throughput, exit without saving")
     args = ap.parse_args()
@@ -105,6 +108,10 @@ def main():
         if int(split[0].max()) >= meta["base_vocab_size"]:
             raise ValueError(f"Token id outside vocabulary: {name}")
     order = np.random.default_rng(args.seed).permutation(len(train[2]))
+    if args.train_chars:
+        cut = int(np.searchsorted(np.cumsum(train[2][order]), args.train_chars)) + 1
+        order = order[:cut]
+    planned_chars = int(train[2][order].sum())
     order_hash = hashlib.sha256(order.astype("<i8").tobytes()).hexdigest()
     steps = (len(order) + args.batch - 1) // args.batch
     if args.arch == "hourglass" and (args.tokenizer != "morph" or not (args.data_root / "morph" / "word_classes.npy").exists()):
@@ -122,8 +129,8 @@ def main():
                   evaluation="identical text segments; all tokens scored from shared BOS; right padding ignored")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
-    print(f"{args.tokenizer}, seed {args.seed}: {steps} steps, {meta['splits']['train']['chars']:,} characters, "
-          f"{meta['splits']['train']['tokens'][args.tokenizer]:,} tokens; output {args.output_dir}", flush=True)
+    print(f"{args.tokenizer}, seed {args.seed}: {steps} steps, {planned_chars:,} of "
+          f"{meta['splits']['train']['chars']:,} characters; output {args.output_dir}", flush=True)
     seen_chars = seen_tokens = 0
     started = time.monotonic()
     model.train()
@@ -163,7 +170,7 @@ def main():
             print(f"step {step+1}/{steps} nats/char {loss.item()/chars:.4f}; "
                   f"seen {seen_chars:,} chars; training ETA {eta:.1f} min (validation extra)", flush=True)
     train_s = time.monotonic() - started
-    if seen_chars != meta["splits"]["train"]["chars"]:
+    if seen_chars != planned_chars:
         raise ValueError("Training did not cover exactly the planned text")
     torch.save({"model_state": model.state_dict(), "optimizer_state": opt.state_dict(),
                 "scheduler_state": schedule.state_dict(), "config": config,
