@@ -31,8 +31,15 @@ def load_split(root, name, split):
     return ids, offsets, chars
 
 
+def vocab_for(meta, tokenizer):
+    """vocab_size / bos_id / base_vocab_size of one tokenizer (ablation data keeps one per tokenizer)."""
+    own = meta.get("tokenizers", {}).get(tokenizer)
+    return own or {k: meta[k] for k in ("vocab_size", "bos_id", "base_vocab_size")}
+
+
 def build_model(config, meta, data_root):
     """GPT or Hourglass from a run config (dict); used by training and evaluation."""
+    meta = {**meta, **vocab_for(meta, config.get("tokenizer", "morph"))}
     if config.get("arch", "gpt") == "gpt":
         return GPT(meta["vocab_size"], config["d"], config["layers"], config["d"] // 64, config["ctx"])
     wclass_path = Path(data_root) / "morph" / "word_classes.npy"
@@ -63,7 +70,7 @@ def text_batch(split, indices, bos):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--data-root", type=Path, required=True)
-    ap.add_argument("--tokenizer", choices=["morph", "bpe"], required=True)
+    ap.add_argument("--tokenizer", required=True, help="morph, bpe, or any tokenizer listed in the data meta")
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--d", type=int, default=384)
@@ -98,6 +105,9 @@ def main():
     torch.manual_seed(args.seed)
     torch.set_num_threads(min(8, torch.get_num_threads()))
     meta = json.loads((args.data_root / "meta.json").read_text())
+    if args.tokenizer not in meta["splits"]["train"]["tokens"]:
+        ap.error(f"tokenizer {args.tokenizer!r} is not in {args.data_root}")
+    tv = vocab_for(meta, args.tokenizer)
     train = load_split(args.data_root, args.tokenizer, "train")
     valid = load_split(args.data_root, args.tokenizer, "valid")
     if any(int(np.diff(split[1]).max()) > args.ctx for split in (train, valid)):
@@ -105,7 +115,7 @@ def main():
     for name, split in (("train", train), ("valid", valid)):
         if int(split[2].sum()) != meta["splits"][name]["chars"]:
             raise ValueError(f"Character count mismatch: {name}")
-        if int(split[0].max()) >= meta["base_vocab_size"]:
+        if int(split[0].max()) >= tv["base_vocab_size"]:
             raise ValueError(f"Token id outside vocabulary: {name}")
     order = np.random.default_rng(args.seed).permutation(len(train[2]))
     if args.train_chars:
@@ -141,7 +151,7 @@ def main():
         tokens, loss = 0, 0.
         opt.zero_grad(set_to_none=True)
         for micro in np.array_split(batch_indices, min(args.accum, len(batch_indices))):
-            x, y, _, micro_tokens = text_batch(train, micro, meta["bos_id"])
+            x, y, _, micro_tokens = text_batch(train, micro, tv["bos_id"])
             x, y = x.to(args.device), y.to(args.device)
             with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
                 micro_loss = model(x, y)
@@ -183,7 +193,7 @@ def main():
         for start in range(0, len(valid[2]), args.batch):
             tick = time.perf_counter()
             indices = np.arange(start, min(start + args.batch, len(valid[2])))
-            x, y, chars, tokens = text_batch(valid, indices, meta["bos_id"])
+            x, y, chars, tokens = text_batch(valid, indices, tv["bos_id"])
             with torch.autocast(args.device, dtype=torch.bfloat16, enabled=amp):
                 total += model(x.to(args.device), y.to(args.device)).item()
             valid_chars += chars
