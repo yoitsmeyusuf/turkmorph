@@ -1,18 +1,18 @@
 [build-system]
-requires = ["maturin>=1.5,<2"]
+requires = ["maturin>=1.9,<2"]
 build-backend = "maturin"
 
 [project]
 name = "turkmorph"
-version = "0.2.0"
+version = "0.2.1"
 description = "Lossless Turkish morphological tokenizer with a fast Rust runtime"
-readme = "README.md"
+readme = "PYPI.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0 (code); CC-BY-SA-4.0 (data tables)" }
+license = "Apache-2.0 AND CC-BY-SA-4.0"   # code Apache-2.0; runtime tables CC BY-SA 4.0 (see NOTICE)
+license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "Muhammet Yusuf Kaydin" }]
 keywords = ["turkish", "tokenizer", "morphology", "nlp", "language-model"]
 classifiers = [
-    "License :: OSI Approved :: Apache Software License",
     "Natural Language :: Turkish",
     "Programming Language :: Python :: 3",
     "Programming Language :: Rust",

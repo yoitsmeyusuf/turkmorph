@@ -225,7 +225,7 @@ Tokenizer düzeyi (7.042 ham test cümlesi):
 | Kayıpsızlık | **100%** |
 | Token / kelime | 2.22 (düz BPE, eşit bütçe: 1.31) |
 | Token dağılımı | ROOT 38.5%, SFX 35.5%, özel 14%, PUNCT 9%, LEX 1.9%, BYTE ~0% |
-| Vocab | 58.5K: ROOT 39.6K, LEX 16.1K, SFX 81 + işaretli 116, düzeltme 2.3K, BYTE 256 |
+| Vocab | 58.667: ROOT 39.653, LEX 16.143, düzeltme 2.304, SFX 240 (39'u belirsiz zincirler için birleşik ID), BYTE 256, PUNCT 43, DIGIT 10, özel 18 |
 | Analiz hızı | tek çekirdek 0.5 ms/kelime (v0.3: 8.4 ms), önbellekten ~1 µs |
 
 Kelime başına token sayısı bilinçli bir tercih: her morfem ayrı token ve uzun dizi maliyetini model tarafı
@@ -388,7 +388,7 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
 | `lm/` | GPT/Composer, BPC; tamamlanan GPT pilotları ve üç seed karşılaştırma betiği |
 | `tests/data/phenomena.tsv` | 273 kelimelik fenomen seti (32 kategori, demo preset'e göre) |
 
-## v0.6 değişiklikleri
+## Geliştirme turu 6 (iç numara; PyPI sürümleri 0.2.x)
 
 - **EM başlangıcı:** BellaTurca EM'i eşit dağılım yerine UD lemma-kısıtlı modelle başlıyor; yerel optimum
   düzeldi (`ise` artık `is+DAT` değil, kopula `i+sA`). İsimden sonra kişi ekine önsel ceza (`anneciğim` → `P1SG`).
@@ -409,7 +409,7 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
   - ASCII kontrolü artık bitişik ayırmadan önce yapılıyor
 - **Araçlar:** `scripts/compare_tt.py`, `server/` (test arayüzü).
 
-## v0.5 değişiklikleri
+## Geliştirme turu 5 (iç numara; PyPI sürümleri 0.2.x)
 
 - **Gerçek hata düzeltmeleri** (UD hata analizinden):
   - P3SG ile biten zamirler iç gövde alıyor: `kendini`, `birbirlerine`, `hepsine`, `birine`.
@@ -425,7 +425,7 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
 - **Ölçüm:** `scripts/errors.py` (kök ve ek düzeyi, bağlam/kural farkı/gerçek hata ayrımı),
   `scripts/eval_noise.py` (yapay hata).
 
-## v0.4 değişiklikleri
+## Geliştirme turu 4 (iç numara; PyPI sürümleri 0.2.x)
 
 - **Bileşik P3SG** (`zeytinyağı`, `işbirliği`, `madensuyu`): kökte iç gövde saklanıyor. Çoğul ya da
   iyelik gelince üretici iç gövdeye geçiyor: `zeytinyağ-lar-ı`, `zeytinyağ-ım`, `işbirlik-ler-i`, `âdemoğul-lar-ı`.
@@ -445,8 +445,14 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
 
 ## Kalan sınırlar
 
-- **LM deneyi:** 1 milyon tokenlık tek-seed GPT pilotunda morph 2.199, BPE 2.321 BPC.
-  Bunlar ön sonuçlardır; üç-seed/10 milyon token karşılaştırması henüz tamamlanmadı.
+- **LM deneyi:** BPC kazancı az eğitilmiş rejimde ölçüldü (130M modele ~57M BPE tokenı); veri ekseni,
+  normalizasyon ablasyonu (büyük harf/rakam/kesme ayrımının payı) ve iso-FLOP karşılaştırması eksik.
+  BellaTurca'da test ile valid aynı dosyanın farklı bölümlerinden; aralarındaki ~0,35 BPC farkı açıklanmadı.
+- **Kök ID bölünmesi:** 334 kökün yalnız leksikal bayrakta ayrılan iki ID'si var (`koyun` → `R:koyun#N.1`,
+  `koyunu` → `R:koyun#N`); aynı lemmanın istatistiği ikiye bölünüyor.
+- **Bilinmeyen kök:** kök bulunamazsa ekler de LEX parçalarına düşüyor (`…L:lar L:ım L:dan`), bazen sona
+  sahte ek ekleniyor. Yabancı kelimede sahte analiz (`fine-tune` → `fi+P2SG+DAT`), kısaltmada Türkçe küçük
+  harf (`COVID` → `covıd`), `Prof`/`Dr` tutarsızlığı.
 - **Leksikon:** `-Ayaz/-Akal/-Adur` birleşik fiilleri yok. Kişi adlarında uyum istisnası bayrağı eksik
   Özel isimlerin uyum istisnası artık korpustan çıkarılıyor (`Kemal'e`, 316 isim); isim korpusta yoksa çıkmaz.
 - **Normalizasyon:** değiştirme+düşürme türü 2 harf hataları (`geliyrom`) bulunmuyor; tek harf düzeltmesinin
