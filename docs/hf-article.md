@@ -1,28 +1,38 @@
 ---
-title: "Morphemes, not merges: a lossless Turkish tokenizer and what it does to language models"
+title: "Morphemes, not merges: what a lossless Turkish tokenizer buys a language model, and where it stops"
 authors:
   - user: yoitsmeyusuf
 ---
 
-# Morphemes, not merges: a lossless Turkish tokenizer and what it does to language models
+# Morphemes, not merges: what a lossless Turkish tokenizer buys a language model, and where it stops
 
 **TL;DR**
 
 - I built [turkmorph](https://github.com/yoitsmeyusuf/turkmorph), a Turkish tokenizer that
   emits roots and suffixes instead of BPE pieces, and that decodes back to the exact input
   text.
-- In a controlled comparison, GPT models trained on its tokens reach **11–12% lower bits per
-  character** than models trained on BPE. The comparison uses the same text, the same
-  vocabulary size and the same architecture, and tunes both tokenizers. Without BPE-specific
-  tuning the gap is 13–15%.
-- A word-level "hourglass" architecture built on top of it lost at scale.
-- Two 360M models and all code are public.
+- In controlled comparisons (same text, same vocabulary size, same model, both tokenizers
+  tuned, scored in bits per character), GPT models trained on its tokens beat byte-level BPE:
+  - **11%** for a 130M model on 300M characters;
+  - **7%** for the same model on 1B characters.
+- **The advantage shrinks as data grows.** It is largest where data is scarce.
+- **An ablation ladder splits the gain three ways:**
+  - **57%** comes from cutting words at morpheme boundaries;
+  - **27%** comes from cheap normalisation: casing marks, digits, apostrophes;
+  - **16%** comes from storing suffixes as archiphonemes (`-lar/-ler` → one id).
+- **A word-level hourglass model built on these tokens lost at scale.**
+- **Everything is public:** two 360M models, the code, and all result tables.
 
 | | |
 |---|---|
-| 🧩 Tokenizer | [github.com/yoitsmeyusuf/turkmorph](https://github.com/yoitsmeyusuf/turkmorph) (`pip install turkmorph`) |
+| 🧩 Tokenizer | [github.com/yoitsmeyusuf/turkmorph](https://github.com/yoitsmeyusuf/turkmorph) · `pip install turkmorph` |
 | 🤖 Model | [turkmorph-gpt-360m](https://huggingface.co/yoitsmeyusuf/turkmorph-gpt-360m) |
 | ⏳ Negative result | [turkmorph-hourglass-360m](https://huggingface.co/yoitsmeyusuf/turkmorph-hourglass-360m) |
+
+An earlier draft of this post claimed "11–15% better" and stopped there. A reviewer pointed
+out what that left untested: where the gain comes from, how it behaves with more data, and
+what it costs in compute. This version adds those experiments. The answers are less
+flattering than the headline, and more useful.
 
 ## The problem: BPE doesn't know where Turkish words break
 
@@ -40,13 +50,11 @@ trained on 1B characters of Turkish, with the same vocabulary size as turkmorph:
 
 Two things stand out:
 
-1. **BPE splits roots apart.** BPE breaks the root *git-* ("go"), which surfaces as *gid-*,
-   into `gi · dem`, and breaks *sokak* ("street") into `s · ok`. The model has to learn
-   every time that these fragments belong together.
+1. **BPE breaks roots apart.** *git-* ("go", surfacing as *gid-*) becomes `gi · dem`, and
+   *sokak* ("street") becomes `s · ok`.
 2. **BPE spreads one suffix over many tokens.** Vowel harmony and consonant assimilation give
-   the ablative ("from") four surface forms: *-den, -dan, -ten, -tan*. To BPE these are
-   different tokens, and they often merge with neighbouring material. In turkmorph they are
-   always one token, `S:ABL`:
+   the ablative four surface forms: *-den, -dan, -ten, -tan*. In turkmorph they are always one
+   token:
 
 ```
 evden    → R:ev#N     S:ABL        okuldan  → R:okul#N  S:ABL
@@ -56,145 +64,162 @@ kitaptan → R:kitap#N  S:ABL        sokaktan → R:sokak#N S:ABL
 ## How turkmorph works
 
 - **Archiphonemic suffixes.** turkmorph stores suffixes as archiphonemic ids, for example
-  `S:PL` = *-lAr* and `S:ABL` = *-DAn*. It stores roots with their lexical flags: does the
-  final consonant soften, does a vowel drop, does the word break vowel harmony.
+  `S:PL` = *-lAr* and `S:ABL` = *-DAn*. It stores roots with lexical flags: does the final
+  consonant soften, does a vowel drop, does the word break vowel harmony.
 - **Decoding.** On decode, the surface form is regenerated deterministically from the root's
   flags and the suffix chain.
-- **Lossless by construction.** An analysis is accepted only if regenerating it gives back
-  the original word. That makes `decode(encode(text)) == text` an invariant. It is checked
-  on every UD test sentence, on held-out BellaTurca documents, and with random-string
-  fuzzing.
-- **Fallbacks.** Words outside the lexicon fall back to a small BPE over leftover word pieces
-  (`L:`), and from there to bytes (`B:`). Casing, apostrophes and spacing are explicit marks.
+- **Lossless by construction.** An analysis is accepted only if regenerating it reproduces
+  the word, so `decode(encode(text)) == text` is an invariant. It is tested on every UD test
+  sentence, on held-out BellaTurca documents, and with random-string fuzzing.
+- **Fallbacks.** Words outside the lexicon fall back to a small BPE (`L:`), and from there to
+  bytes (`B:`). Casing, apostrophes and spacing are explicit marks.
 
-The 58,667-token vocabulary:
+The vocabulary has 58,667 tokens:
 
 | namespace | count | what it holds |
 |---|---:|---|
 | `R:` | 39,653 | roots |
 | `L:` | 16,143 | BPE fallback pieces |
-| `E:` | 2,304 | edits |
+| `E:` | 2,304 | spelling edits |
 | `B:` | 256 | bytes |
 | `S:` | 240 | suffixes |
 | `P:` | 43 | punctuation |
 | `D:` | 10 | digits |
 | specials | 18 | casing marks, apostrophe, newline, … |
 
-**Root quality.** On the Universal Dependencies Turkish test sets (49K words), the chosen
-root matches the gold lemma 88.8% of the time. Counting derivational suffixes it is 94.0%;
-the oracle ceilings are 90.6% and 96.0%. Ambiguity costs were learned with EM on 118M
-tokens of BellaTurca. The runtime is Rust with a Python API.
+**Two honest caveats about "one morpheme, one token".**
 
-**The price.** turkmorph produces more tokens, about 2.2 per word. On the 1B-character corpus
-below, the same text is 344M morph tokens versus 208M BPE tokens, 1.66× as many; on BellaTurca
-the ratio is 1.7–1.8×. Longer sequences mean more compute per character. The metric used below
-is per character, so it does not hide this cost, and the compute question gets its own test.
+- **Union ids.** 39 of the suffix ids are unions for label-only ambiguity. In *modellerini*,
+  the plural may belong to the noun or to the possessive, so the word ends in a single
+  `S:P3PL+ACC|PL+P2SG+ACC|PL+P3SG+ACC`. Plural information therefore sometimes sits in `S:PL`
+  and sometimes inside a union.
+- **Context-free choices.** Ambiguous analyses are resolved without context: *Gelecek hafta*
+  ("next week") comes out as *gel+FUT*.
+
+**Root quality.** On the Universal Dependencies Turkish test sets (49K words), the chosen
+root matches the gold lemma 88.8% of the time.
+
+**The price.** turkmorph produces more tokens. On the 1B-character corpus below, the same
+text is 344M morph tokens versus 208M BPE tokens, 1.66× as many.
 
 ## A fair comparison
 
-Tokenizer comparisons are easy to get wrong. Measure loss per token and the tokenizer that
-makes more, easier tokens wins for free. Train on "the same number of tokens" and one model
-has seen much more text. The protocol here:
+Tokenizer comparisons are easy to get wrong. The protocol:
 
-1. **Same text.** The corpus is cut into segments that both tokenizers encode within the
-   length limit. Both models see exactly these segments in exactly the same order.
-2. **Same vocabulary size.** 58,667 for both. The BPE is a byte-level BPE trained on the same
-   training text.
-3. **Bits per character.** All tokens are scored from a shared BOS, and the total is divided
-   by the number of characters. The metric does not care how the text was cut.
+1. **Same text.** The corpus is cut into segments that every tokenizer encodes within the
+   context. All models see exactly these segments, in the same order.
+2. **Same vocabulary size.** 58,667 for both. The BPE is byte-level and trained on the same
+   corpus.
+3. **Bits per character (BPC).** All tokens are scored from a shared BOS, and the total is
+   divided by the number of characters. The metric does not care how the text was cut.
 4. **Same model.** A plain GPT: pre-LN, GELU, learned positions, tied embeddings.
-5. **Tuning both sides.** I swept batch size and learning rate for each tokenizer. Because
-   batches count segments, BPE sees fewer tokens per step at the same batch size, so it needs
-   a larger batch. BPE was best at batch 128 and morph at batch 64, both about 21–25K tokens
-   per step. The headline number is best against best.
-6. **Held-out test text** that was never used for any choice.
+5. **Both sides tuned.** Batches count segments, so BPE sees fewer tokens per step at the
+   same batch size. In a sweep on BellaTurca, both tokenizers were best at about 21–25K
+   tokens per step, at their own learning rates.
+   - Result 1 uses each tokenizer's best setting.
+   - Result 2 carries those settings over to a new corpus without re-tuning.
+   - The ablation uses one shared setting, the best one for BPE at that size.
 
-Training ran on single H100s on [Modal](https://modal.com).
+## Result 1: a clear gain at small scale
 
-## Results
+On 300M characters of BellaTurca, BPC valid / test:
 
-**Scaling: 300M characters of BellaTurca.** BPC, lower is better, valid / test:
+| model | turkmorph | BPE | turkmorph better by |
+|---|---|---|---|
+| 130M, each at its best batch/lr | 1.146 / 1.505 | 1.283 / 1.714 | **10.7% / 12.2%** |
+| 130M, same setting, 3 seeds | 1.168 / 1.525 | 1.344 / 1.774 | 13.1% / 14.0% |
 
-| model | setting | turkmorph | BPE | turkmorph better by |
-|---|---|---|---|---|
-| 130M (d768, 12 layers), 3 seeds | same batch/lr | 1.168 / 1.525 | 1.344 / 1.774 | 13.1% / 14.0% |
-| 130M, **each at its best batch/lr** | morph b64 · BPE b128 | **1.146 / 1.505** | **1.283 / 1.714** | **10.7% / 12.2%** |
-| 360M (d1024, 24 layers) | same batch/lr | 1.153 / 1.516 | 1.359 / 1.779 | 15.2% / 14.8% |
+The seed spread is 0.002–0.007 BPC.
 
-- **Seeds.** The spread across seeds is 0.002–0.007 BPC, so the gap is far outside noise.
-- **Tuning.** The gap shrinks when BPE gets its best settings. The honest figure is the
-  best-against-best one: **about 11% on valid and 12% on test**. Higher numbers from untuned
-  comparisons overstate it.
-- **Model size.** At the same settings the gap does not close as the model grows: at batch 16,
-  it is 15.2% at 130M and 15.7% at 360M on valid.
+**An unexplained gap.** Valid and test differ by about 0.35 BPC here, and both come from the
+same held-out file. I have not explained this. It may be a non-random split, such as a
+change of source document type across the file, or near-duplicates that exact-hash
+deduplication missed. It does not change the comparison, because both tokenizers see the
+same text, but it is a reason not to over-read absolute values.
 
-**What about compute?** A morph model does more work per character, because it sees 1.7–1.8×
-more tokens. In a smaller study (33M parameters, 3 seeds, an earlier vocabulary version) I gave
-BPE 1.77× more text, so both models processed the same number of tokens. turkmorph still won
-by **15.8%** on test (2.015 vs 2.395 BPC). At least at this size, the advantage is not just
-extra compute.
+## Result 2: the gap shrinks with data
 
-### Why it helps
+A 130M model at 300M characters is heavily undertrained, and that is exactly where a strong
+inductive bias helps most. So I trained the same 130M model on a different corpus:
+Wikipedia-tr plus FineWeb-2, with a 2,048-token context and its own test set. The data was
+nested: the 300M run sees a prefix of the 1B run's shuffled order.
 
-Look again at the BPE column of the first table. With morphemes as tokens, the model does
-not have to:
+| training text | turkmorph valid / test | BPE valid / test | turkmorph better by |
+|---|---|---|---|
+| 300M chars | 1.412 / 1.378 | 1.592 / 1.554 | **11.3% / 11.3%** |
+| 1B chars | 1.213 / 1.185 | 1.307 / 1.281 | **7.2% / 7.4%** |
 
-- learn that `gi · dem`, `gid` and `git` are one verb;
-- learn that `dan`, `tan`, `den` and `ten` are one suffix;
-- learn which fragments reassemble into which words.
+**What this shows.** The same 11% gain appears on a corpus the tokenizer tables were not
+built from, and this corpus has no strange valid/test gap. With 3.3× more text, the advantage
+falls to 7%. I could not afford 3B characters, so I do not know where the curve flattens or
+whether it reaches zero.
 
-The tokenizer has already done that. A suffix such as `S:ABL` collects every occurrence of
-the ablative in one token, so its embedding is learned from all of them instead of being
-split across many BPE pieces. Roots are whole units, so the model can spend its capacity
-on syntax and meaning.
+**Compute.** Morph's 1.66× more tokens make training about 1.6× slower: 27.5 versus 17.5 min
+for the 1B runs on an H100. If I interpolate morph's two runs to BPE's training time, it is
+roughly **1% better** at equal wall-clock. That is an estimate across a data curve, not a
+measured iso-FLOP run.
 
-## The hourglass experiment, and why it lost
+An older small-scale check (33M parameters) gave BPE 1.77× more text, so both models
+processed the same number of tokens. There, morph still won by 15.8%. Taken together: at
+small scale the gain holds at equal compute, but at 130M with 1B characters, most of the gap
+is closed by giving BPE the compute morph spends on its extra tokens.
 
-If morph tokens cost 1.66× more positions, can we win that back? turkmorph knows exactly
-where each word starts and ends, so I tried an **hourglass** transformer:
+## Result 3: where the gain comes from
 
-```
-morph tokens ─► 4 token blocks ─► pool each word ─► 16 word blocks ─► shift by one word ─► 4 token blocks ─► next token
-```
+turkmorph does several things at once. Byte-level BPE does none of them, so it is not
+obvious which ones matter. I built two intermediate tokenizers and trained the same 33M
+model on identical segments, with 3 seeds each:
 
-The middle 16 layers run once per word instead of once per token, which is about 0.51
-positions per token. Three changes were specific to turkmorph:
+| step | tokenizer | valid BPC (mean of 3) | gain | share of total |
+|---|---|---:|---:|---:|
+| 0 | byte-level BPE | 1.952 | | |
+| 1 | + casing marks, one token per digit, isolated apostrophe, then BPE (same vocab size) | 1.898 | 0.053 | **27%** |
+| 2 | + morpheme split, but suffixes keep their surface form (`S:PL@lar` ≠ `S:PL@ler`) | 1.788 | 0.111 | **57%** |
+| 3 | + archiphonemic suffix ids: turkmorph | 1.757 | 0.030 | **16%** |
 
-- **Word boundaries.** Word groups come from the tokenizer's own grouping rule: root plus its
-  suffixes, apostrophe and casing marks.
-- **Order inside a word.** An in-word position embedding (root = 0, first suffix = 1, …),
-  because sum pooling cannot tell `S:PL S:P1PL` from `S:P1PL S:PL`.
-- **Pooling.** The word state is the last token state concatenated with the mean token state.
+- **Consistency.** Every step improves on every seed. The seed spread for turkmorph is
+  0.001 BPC.
+- **Morpheme boundaries do most of the work.** Cutting at morpheme boundaries is the
+  largest step, well beyond what normalisation alone gives.
+- **Archiphonemes help, but less.** Merging allomorphs into one id is a real but smaller
+  effect, about a sixth of the total.
+- **Scale.** This is a small model on 30M characters. Given Result 2, the shares at larger
+  scale may differ.
 
-**At small scale it looked promising.** With 33M parameters and 30M characters:
+## Side quest: an hourglass that lost
 
-| variant | valid BPC |
-|---|---:|
-| flat GPT | 1.7566 |
-| hourglass, sum pooling | 1.7590 |
-| + in-word position | 1.7506 |
-| + last+mean pooling | **1.7501** (0.4% better than flat) |
+turkmorph knows exactly where each word starts and ends. So I tried to win back the 1.66×
+sequence cost with an **hourglass** transformer: 4 token blocks, then 16 blocks that run
+once per *word*, then 4 token blocks. The word stack runs on about 0.51 positions per token.
 
-**At scale it lost.** Both models have 360M parameters, a 2,048-token context and the same
-1B characters: Turkish Wikipedia plus FineWeb-2.
+Three changes were specific to turkmorph:
+
+- the tokenizer's own word groups;
+- an in-word morpheme position embedding;
+- last-token plus mean pooling.
+
+With these changes, the hourglass beat the flat model by 0.4% at 33M parameters. At 360M
+parameters, with 1B characters and a 2,048-token context, it lost:
 
 | model | train time (H100) | valid BPC | test BPC |
 |---|---:|---:|---:|
 | flat GPT, 24 layers | 54.4 min | **1.185** | **1.158** |
 | hourglass 4 + 16 + 4 | 43.9 min | 1.219 (+2.9%) | 1.191 (+2.9%) |
 
-The hourglass is 19% faster, and 2.9% worse.
+The hourglass was 19% faster and 2.9% worse. This is one seed, and the hourglass did not get
+its saved time back as extra steps. I publish it because "word-level compression is free" is
+a tempting conclusion that this experiment does not support.
 
-**Samples.** I generated from both models with the same prompts and seeds. Both handle
-morphology equally well: *İstanbul'daki*, *kaydedilmiştir*, *ev sahipliği yapmaktadır*. The
-hourglass drifts off topic sooner. My hypothesis, which I have not tested: a single vector per
-word throws away detail that a larger model can use and a small one cannot, so the small-scale
-ablation hid the cost.
+## What I take from this
 
-**Caveats.** This is one seed, and the hourglass was not given its saved 19% back as extra
-steps, so an equal-compute run could narrow the gap. I am publishing it as a negative result,
-because "word-level compression is free" is a tempting conclusion that this experiment does
-not support.
+1. **Morpheme boundaries are worth more than the clever encoding.** For Turkish, cutting
+   words where the morphology cuts them gives most of the gain. Storing suffixes as
+   archiphonemes adds a smaller part on top.
+2. **The benefit is a data-efficiency effect.** It is large when text is scarce and shrinks
+   as text grows. That still matters for Turkish: many domains and many small labs live in
+   the low-data regime. But the effect has not been shown for pretraining at scale.
+3. **Cost goes up.** Longer sequences mean about 1.6× more training compute and a context
+   window that holds about 0.6× as much text.
 
 ## Try it
 
@@ -215,38 +240,35 @@ out = model.generate(ids, max_new_tokens=100, do_sample=True, top_p=0.95, temper
 print(tok.decode_ids(out[0, 1:].tolist()))
 ```
 
-A real sample:
-
-> **Bu tarifte kullanacağınız malzemeler şunlardır:**
-> - Yarım bardak su
-> - Bir tatlı kaşığı biber salçası
-> - Hazırlanışı için
-> - Tuz, karabiber
-> …
-> Tencereye koyduktan sonra, daha fazla su ilave ederek kaynamaya bırakın.
-
-The 360M model is a research base model. It writes fluent, correctly inflected Turkish and
-invents facts freely.
+The models were trained with turkmorph 0.2. Version 0.3 keeps the same vocabulary, but
+picks canonical root ids, so a few words tokenize differently. Pin `turkmorph==0.2.*` to
+reproduce the models exactly.
 
 ## Limitations
 
-- **Only language-modelling quality was measured.** I did not test downstream tasks such as
-  classification, QA or NER.
-- **Small models.** 360M parameters at most, and at most 1B training characters.
-- **More tokens.** About 1.7× as many tokens per character means longer sequences at
-  inference. The equal-compute result says this is worth paying at small scale; at large
-  scale it is untested.
-- **Lexicon coverage.** turkmorph analyses 96–99% of words with a known root. The rest go
-  through the BPE or byte fallback, which is still lossless but less meaningful.
+- **Only BPC was measured.** I did not run downstream tasks such as classification, QA or
+  NER.
+- **Statistics.** Larger runs use one seed. Three seeds exist only for the 130M BellaTurca
+  setting and the ablation.
+- **No iso-FLOP curve.** The equal-compute statements above are a token-matched small run and
+  an interpolation.
+- **Tokenizer gaps.**
+  - Foreign words can get spurious analyses: `fine` → *fi+P2SG+DAT*.
+  - Acronyms get Turkish lowercasing: `COVID` → *covıd*.
+  - A word with a missing suffix falls back to BPE as a whole.
+
+  These are listed in the package README.
 
 ## Credits
 
 - **Lexicon:** built from [Zemberek](https://github.com/ahmetaa/zemberek-nlp).
-- **Training data:** [Turkish Wikipedia](https://huggingface.co/datasets/wikimedia/wikipedia)
-  (CC BY-SA 4.0), [FineWeb-2](https://huggingface.co/datasets/HuggingFaceFW/fineweb-2)
-  `tur_Latn` (ODC-By 1.0), and BellaTurca for the tokenizer statistics and the scaling study.
+- **Training data:**
+  - [Turkish Wikipedia](https://huggingface.co/datasets/wikimedia/wikipedia) (CC BY-SA 4.0)
+  - [FineWeb-2](https://huggingface.co/datasets/HuggingFaceFW/fineweb-2) `tur_Latn` (ODC-By 1.0)
+  - BellaTurca
 - **Evaluation:** the Universal Dependencies Turkish treebanks.
-- **Compute:** the scaling and hourglass runs used Modal's free credits.
+- **Compute:** large runs used Modal's free credits; ablations ran on an RTX 4060.
+- **Review:** thanks to the reviewer whose critique produced Results 2 and 3.
 
-The full experiment logs, scripts and result tables are in the repository under `lm/` and
-`results/`. Feedback and issues are welcome!
+Every result table is in the repository under `results/`, and every experiment script is
+under `lm/` and `scripts/`.
