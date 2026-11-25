@@ -27,14 +27,15 @@ def main():
         train = modal.Function.from_name("turkmorph-lm", "train")
         for spec in specs:
             call = train.spawn(spec, dataset=dataset)
-            calls[spec] = {"id": call.object_id, "dataset": dataset}
+            calls[f"{dataset}/{spec}"] = {"id": call.object_id, "dataset": dataset, "spec": spec}
             print("spawned", spec, call.object_id, flush=True)
         CALLS.parent.mkdir(exist_ok=True)
         CALLS.write_text(json.dumps(calls, indent=1))
     elif cmd in ("status", "collect"):
         sys.path.insert(0, str(ROOT))
         from lm.modal_run import DATASETS
-        for spec, info in calls.items():
+        for key, info in calls.items():
+            spec = info.get("spec", key)                 # old registries were keyed by spec alone
             call = modal.FunctionCall.from_id(info["id"])
             try:
                 res = call.get(timeout=0)
