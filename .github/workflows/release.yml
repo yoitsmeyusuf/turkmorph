@@ -24,8 +24,8 @@ jobs:
         include:
           - { os: ubuntu-latest, target: x86_64, smoke: true }
           - { os: ubuntu-latest, target: aarch64, smoke: false }
-          - { os: macos-14, target: aarch64, smoke: true }
-          - { os: macos-14, target: x86_64, smoke: false }
+          - { os: macos-latest, target: aarch64, smoke: true }
+          - { os: macos-latest, target: x86_64, smoke: false }
           - { os: windows-latest, target: x64, smoke: true }
     steps:
       - uses: actions/checkout@v4
