@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "turkmorph"
-version = "0.2.1"
+version = "0.3.0"
 description = "Lossless Turkish morphological tokenizer with a fast Rust runtime"
 readme = "PYPI.md"
 requires-python = ">=3.10"

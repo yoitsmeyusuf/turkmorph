@@ -55,6 +55,25 @@ def tr_upper(s): return s.replace("i", "İ").replace("ı", "I").upper()
 def tr_cap(s): return tr_upper(s[:1]) + s[1:] if s else s
 
 
+def canonical_roots(analyses):
+    """A homograph variant (koyun#N.1, the koynu root) only where the surface needs it:
+    when the untagged root yields the same word with the same chain (koyun, koyunlar), its
+    analysis takes the variant's place, so one lemma does not split over two ids."""
+    base = {}
+    for a in analyses:
+        if not a.root.tag:
+            base.setdefault((a.root.form, a.root.pos, a.sfx), a)
+    out, seen = [], set()
+    for a in analyses:
+        if a.root.tag:
+            a = base.get((a.root.form, a.root.pos, a.sfx), a)
+        k = (a.root.key, a.sfx)
+        if k not in seen:
+            seen.add(k)
+            out.append(a)
+    return out
+
+
 class TurkMorphTokenizer:
     def __init__(self, bpe: LexBPE, attested_stems: set[str] | None = None,
                  cache_size: int = 100_000, lexicon: Lexicon | None = None,
@@ -218,6 +237,7 @@ class TurkMorphTokenizer:
         ov = self.overrides.get(low)
         if ov is not None:                                    # frequency audit (scripts/build_overrides.py)
             analyses.sort(key=lambda a: (a.root.key, a.sfx) != ov)
+        analyses = canonical_roots(analyses)
         out = [[f"R:{a.root.key}", *[f"S:{s}" for s in a.sfx]] for a in analyses[:8]]
         if self._union_set and len(analyses) > 1:             # label-only ambiguity: claim no more
             u = underspecify(analyses[0], analyses[1:])       # than the word shows (kitab+ı: P3SG|ACC)

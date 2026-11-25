@@ -839,7 +839,7 @@ pub fn analyze_known(t: &Tables, lex: &Lexicon, costs: &Costs, word: &[char]) ->
     for r in lex.candidates(word) {
         let root = &lex.roots[r as usize];
         let state = t.pos_start[&root.pos];
-        for ch in search(t, word, &root.form, root.flags, state, &[], 10, root.inner.as_ref()) {
+        for ch in search(t, word, &root.form, root.flags, state, &[], 12, root.inner.as_ref()) {
             let cost = costs.analysis_cost(t, r, &root.pos, &ch);
             res.push(Analysis { cost, root: r, chain: ch });
         }

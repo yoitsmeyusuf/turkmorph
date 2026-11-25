@@ -50,16 +50,28 @@ pure-Python implementation that produces the same tokens is available as
 | `B:` / `P:` / `D:` | 256 / 43 / 10 | bytes, punctuation, digits |
 | specials | 18 | casing (`<cap>`, `<caps>`), apostrophe, whitespace, … |
 
+## Changes in 0.3.0
+
+- **Canonical roots.** One id per lemma where the surface does not decide: `koyun` and
+  `koyunlar` now use `R:koyun#N`, and the homograph variant `R:koyun#N.1` appears only where
+  it is needed (`koynu`). Tagged root tokens drop by about 80% on running text.
+- **`-CAsInA` after person endings.** `yapmışsınızcasına` and `gelmişlercesine` now analyse
+  fully.
+- **Longer chains.** The maximum suffix chain grew from 10 to 12, so
+  `Çekoslovakyalılaştıramadıklarımızdanmışsınızcasına` now analyses fully.
+- **Same vocabulary.** The 58,667 tokens are unchanged, so models trained with 0.2.x still
+  load. Some words tokenize differently; for exact reproduction of those models, pin
+  `turkmorph==0.2.*`.
+
 ## Known limitations
 
 - **Ambiguity.** Ambiguous analyses are resolved without context
   (`Gelecek hafta` → `gel+FUT`).
-- **Unknown roots.** Words without a known root fall back to BPE pieces, and their suffixes are
-  not separated.
-- **Split root ids.** Some roots have two ids that differ only in a lexical flag
-  (`koyun#N` / `koyun#N.1`).
-- **Foreign words.** Foreign words and acronyms can get Turkish analyses or Turkish lowercasing
-  (`COVID` → `covıd`).
+- **Unknown roots.** Words without a known root fall back to BPE pieces. When no suffix
+  chain fits, a word is split into BPE pieces as a whole: a known prefix is not kept.
+- **Foreign words.** Foreign words can get spurious Turkish analyses (`fine` → `fi+P2SG+DAT`).
+- **Acronyms.** Foreign acronyms get Turkish lowercasing (`COVID` → `covıd`). Fixing this
+  needs a new case mark, which is planned for a vocabulary-changing release.
 
 ## Models and experiments
 

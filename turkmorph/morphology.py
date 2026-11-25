@@ -185,8 +185,9 @@ SUFFIX_LIST = [
     _S("VN", "mA", "N", cost=2.2),
     # person (z-paradigm, k-paradigm)
     # Z1SG after negative aorist is -m and the aorist is zero: gelmem (not *gelmezim)
-    _S("Z1SG", "(y)Hm", "END", cost=0.9), _S("Z2SG", "sHn", "END", cost=0.9),
-    _S("Z1PL", "(y)Hz", "END", cost=0.9), _S("Z2PL", "sHnHz", "END", cost=0.9),
+    # person ends the word except for -CAsInA "as if": yapmışsınızcasına, gelmişlercesine
+    _S("Z1SG", "(y)Hm", "V_PERS", cost=0.9), _S("Z2SG", "sHn", "V_PERS", cost=0.9),
+    _S("Z1PL", "(y)Hz", "V_PERS", cost=0.9), _S("Z2PL", "sHnHz", "V_PERS", cost=0.9),
     _S("Z3PL", "lAr", "V_Z3PL"),                            # gelmişlerdi
     _S("K1SG", "m", "END"), _S("K2SG", "n", "END"), _S("K1PL", "k", "END"),
     _S("K2PL", "nHz", "END"), _S("K3PL", "lAr", "END"),
@@ -212,7 +213,8 @@ STATES: dict[str, list[str]] = {
     "N_LOCGEN": ["REL", *_COP, *_ZP, "LHK"],                # günde-lik
     "N_REL": ["PL", "P3SG", *_CASES, "COP3"],
     "N_COP": ["Z3PL"],
-    "V_Z3PL": ["PCOP", "ECOP", "CCOP", "COP3", "KEN"],     # otururlar-ken
+    "V_Z3PL": ["PCOP", "ECOP", "CCOP", "COP3", "KEN", "CASINA"],   # otururlar-ken, gelmişler-cesine
+    "V_PERS": ["CASINA"],
     "N_PART": [*_POSS, "PL", "ABL"],                       # gittik-ten
     "V": ["RECP", "CAUS", "PASS", *_VFIN],
     "V_RECP": ["CAUS", "PASS", *_VFIN],
@@ -482,7 +484,7 @@ class Analysis:
     sfx: tuple = field(compare=False, default=())
 
 
-def _search(word, stem, flags, state, sfx, out, max_depth=10, inner=""):
+def _search(word, stem, flags, state, sfx, out, max_depth=12, inner=""):
     """All suffix chains from `state` that realize `word` from this stem (DFS).
 
     Incremental: each node keeps the generator state before and after its last

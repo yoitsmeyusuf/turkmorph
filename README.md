@@ -448,10 +448,10 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
 - **LM deneyi:** BPC kazancı az eğitilmiş rejimde ölçüldü (130M modele ~57M BPE tokenı); veri ekseni,
   normalizasyon ablasyonu (büyük harf/rakam/kesme ayrımının payı) ve iso-FLOP karşılaştırması eksik.
   BellaTurca'da test ile valid aynı dosyanın farklı bölümlerinden; aralarındaki ~0,35 BPC farkı açıklanmadı.
-- **Kök ID bölünmesi:** 334 kökün yalnız leksikal bayrakta ayrılan iki ID'si var (`koyun` → `R:koyun#N.1`,
-  `koyunu` → `R:koyun#N`); aynı lemmanın istatistiği ikiye bölünüyor.
-- **Bilinmeyen kök:** kök bulunamazsa ekler de LEX parçalarına düşüyor (`…L:lar L:ım L:dan`), bazen sona
-  sahte ek ekleniyor. Yabancı kelimede sahte analiz (`fine-tune` → `fi+P2SG+DAT`), kısaltmada Türkçe küçük
+- **Kök ID bölünmesi (0.3.0'da düzeltildi):** yüzey ayırt etmiyorsa etiketsiz kök seçiliyor (`koyun`, `koyunlar` →
+  `R:koyun#N`; `koynu` → `R:koyun#N.1`). Metinde etiketli kök tokenı ~%80 azaldı.
+- **Bilinmeyen kök / eksik ek:** hiçbir ek zinciri uymazsa kelime bütünüyle LEX'e düşüyor, bilinen baş korunmuyor
+  (0.3.0: `-CAsInA` şahıs ekinden sonra eklendi, zincir sınırı 12; `…mışsınızcasına` artık tam analiz ediliyor). Yabancı kelimede sahte analiz (`fine-tune` → `fi+P2SG+DAT`), kısaltmada Türkçe küçük
   harf (`COVID` → `covıd`), `Prof`/`Dr` tutarsızlığı.
 - **Leksikon:** `-Ayaz/-Akal/-Adur` birleşik fiilleri yok. Kişi adlarında uyum istisnası bayrağı eksik
   Özel isimlerin uyum istisnası artık korpustan çıkarılıyor (`Kemal'e`, 316 isim); isim korpusta yoksa çıkmaz.

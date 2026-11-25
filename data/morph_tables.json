@@ -603,7 +603,7 @@
   {
    "id": "Z1SG",
    "tmpl": "(y)Hm",
-   "nxt": "END",
+   "nxt": "V_PERS",
    "n_tmpl": null,
    "soften": false,
    "cost": 0.9
@@ -611,7 +611,7 @@
   {
    "id": "Z2SG",
    "tmpl": "sHn",
-   "nxt": "END",
+   "nxt": "V_PERS",
    "n_tmpl": null,
    "soften": false,
    "cost": 0.9
@@ -619,7 +619,7 @@
   {
    "id": "Z1PL",
    "tmpl": "(y)Hz",
-   "nxt": "END",
+   "nxt": "V_PERS",
    "n_tmpl": null,
    "soften": false,
    "cost": 0.9
@@ -627,7 +627,7 @@
   {
    "id": "Z2PL",
    "tmpl": "sHnHz",
-   "nxt": "END",
+   "nxt": "V_PERS",
    "n_tmpl": null,
    "soften": false,
    "cost": 0.9
@@ -823,7 +823,11 @@
    "ECOP",
    "CCOP",
    "COP3",
-   "KEN"
+   "KEN",
+   "CASINA"
+  ],
+  "V_PERS": [
+   "CASINA"
   ],
   "N_PART": [
    "P1SG",
@@ -1157,6 +1161,7 @@
   "V_OPT",
   "V_PASS",
   "V_PAST",
+  "V_PERS",
   "V_RECP",
   "V_Z",
   "V_Z3PL",

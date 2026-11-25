@@ -473,6 +473,7 @@ impl Tokenizer {
                 !(r.key == *k && a.chain.len() == ch.len() && a.chain.iter().zip(ch).all(|(x, y)| x.name(&self.t) == *y))
             });
         }
+        let an = self.canonical_roots(an);
         let mut out: Vec<Vec<u32>> = an.iter().take(8).map(|a| self.analysis_toks(a)).collect();
         if !self.unions.is_empty() && an.len() > 1 {
             let u = underspecify(&self.t, &self.lex, &an[0], &an[1..], self.t.union_margin);
@@ -480,6 +481,40 @@ impl Tokenizer {
                 let mut v = vec![self.root_tok[an[0].root as usize]];
                 v.extend(u.iter().map(|x| self.tid(&format!("S:{x}"))));
                 out.insert(0, v);
+            }
+        }
+        out
+    }
+
+    /// Port of canonical_roots: an untagged root replaces a homograph variant (koyun#N.1)
+    /// that yields the same word with the same chain; duplicates are dropped, order kept.
+    fn canonical_roots(&self, an: Vec<Analysis>) -> Vec<Analysis> {
+        let names = |a: &Analysis| -> Vec<String> { a.chain.iter().map(|x| x.name(&self.t)).collect() };
+        let base_key = |r: u32| {
+            let r = &self.lex.roots[r as usize];
+            format!("{}#{}", r.form_s, r.pos)
+        };
+        let mut bases: Vec<(String, Vec<String>, usize)> = Vec::new();
+        for (i, a) in an.iter().enumerate() {
+            let bk = base_key(a.root);
+            if self.lex.roots[a.root as usize].key == bk {
+                bases.push((bk, names(a), i));
+            }
+        }
+        let mut out: Vec<Analysis> = Vec::with_capacity(an.len());
+        let mut seen: Vec<(u32, Vec<String>)> = Vec::new();
+        for a in &an {
+            let bk = base_key(a.root);
+            let n = names(a);
+            let pick = if self.lex.roots[a.root as usize].key != bk {
+                bases.iter().find(|(k, c, _)| *k == bk && *c == n).map(|(_, _, i)| &an[*i]).unwrap_or(a)
+            } else {
+                a
+            };
+            let key = (pick.root, names(pick));
+            if !seen.contains(&key) {
+                seen.push(key);
+                out.push(pick.clone());
             }
         }
         out
