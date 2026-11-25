@@ -1,6 +1,5 @@
 ---
 title: "Morphemes, not merges: a lossless Turkish tokenizer and what it does to language models"
-thumbnail: ""
 authors:
   - user: yoitsmeyusuf
 ---
@@ -12,9 +11,10 @@ authors:
 - I built [turkmorph](https://github.com/yoitsmeyusuf/turkmorph), a Turkish tokenizer that
   emits roots and suffixes instead of BPE pieces, and that decodes back to the exact input
   text.
-- In a controlled comparison, GPT models trained on its tokens are 11–15% better than models
-  trained on BPE. The comparison holds text, vocabulary size and architecture fixed, tunes
-  both tokenizers, and scores by bits per character.
+- In a controlled comparison, GPT models trained on its tokens reach **11–12% lower bits per
+  character** than models trained on BPE. The comparison uses the same text, the same
+  vocabulary size and the same architecture, and tunes both tokenizers. Without BPE-specific
+  tuning the gap is 13–15%.
 - A word-level "hourglass" architecture built on top of it lost at scale.
 - Two 360M models and all code are public.
 
@@ -85,9 +85,10 @@ root matches the gold lemma 88.8% of the time. Counting derivational suffixes it
 the oracle ceilings are 90.6% and 96.0%. Ambiguity costs were learned with EM on 118M
 tokens of BellaTurca. The runtime is Rust with a Python API.
 
-**The price.** turkmorph produces more tokens: 2.2 per word, against 1.3 for BPE on the
-same vocabulary budget. On the 1B-character corpus below that is 344M tokens versus 208M,
-or 1.66× as many. Every LM result below has to pay for that.
+**The price.** turkmorph produces more tokens, about 2.2 per word. On the 1B-character corpus
+below, the same text is 344M morph tokens versus 208M BPE tokens, 1.66× as many; on BellaTurca
+the ratio is 1.7–1.8×. Longer sequences mean more compute per character. The metric used below
+is per character, so it does not hide this cost, and the compute question gets its own test.
 
 ## A fair comparison
 
@@ -127,10 +128,11 @@ Training ran on single H100s on [Modal](https://modal.com).
 - **Model size.** At the same settings the gap does not close as the model grows: at batch 16,
   it is 15.2% at 130M and 15.7% at 360M on valid.
 
-**What about compute?** turkmorph makes 1.7–1.8× more tokens, so a morph model does more
-work per character. In a smaller study (33M parameters) I gave BPE 1.77× more text, so both
-models processed the same number of tokens. turkmorph still won by **15.8%** (2.015 vs 2.395
-BPC). The advantage is not just extra compute.
+**What about compute?** A morph model does more work per character, because it sees 1.7–1.8×
+more tokens. In a smaller study (33M parameters, 3 seeds, an earlier vocabulary version) I gave
+BPE 1.77× more text, so both models processed the same number of tokens. turkmorph still won
+by **15.8%** on test (2.015 vs 2.395 BPC). At least at this size, the advantage is not just
+extra compute.
 
 ### Why it helps
 
@@ -143,8 +145,8 @@ not have to:
 
 The tokenizer has already done that. A suffix such as `S:ABL` collects every occurrence of
 the ablative in one token, so its embedding is learned from all of them instead of being
-split across many BPE pieces. Roots are
-whole units, so the model can spend its capacity on syntax and meaning.
+split across many BPE pieces. Roots are whole units, so the model can spend its capacity
+on syntax and meaning.
 
 ## The hourglass experiment, and why it lost
 
@@ -185,9 +187,9 @@ The hourglass is 19% faster, and 2.9% worse.
 
 **Samples.** I generated from both models with the same prompts and seeds. Both handle
 morphology equally well: *İstanbul'daki*, *kaydedilmiştir*, *ev sahipliği yapmaktadır*. The
-hourglass drifts off topic sooner. My reading is that a single vector per word throws away
-information a larger model could have used. The small model could not use it anyway, so the
-small model hid the loss.
+hourglass drifts off topic sooner. My hypothesis, which I have not tested: a single vector per
+word throws away detail that a larger model can use and a small one cannot, so the small-scale
+ablation hid the cost.
 
 **Caveats.** This is one seed, and the hourglass was not given its saved 19% back as extra
 steps, so an equal-compute run could narrow the gap. I am publishing it as a negative result,
