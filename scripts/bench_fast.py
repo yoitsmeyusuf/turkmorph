@@ -1,5 +1,5 @@
-"""Throughput from Python: turkmorph.fast (Rust) vs Python TurkMorph vs TurkishTokenizer.
-    .venv-tt/bin/python scripts/bench_fast.py TEXTS.jsonl     (one JSON string per line)
+"""Throughput from Python: turkmorph.fast (Rust) vs the pure-Python TurkMorph.
+    python scripts/bench_fast.py TEXTS.jsonl     (one JSON string per line)
 Each runs twice: cold (empty cache) and warm."""
 import json
 import sys
@@ -27,12 +27,6 @@ rs = fast_tokenizer()
 run("turkmorph.fast 1 thread", lambda d: [rs.encode_ids(t) for t in d])
 rs = fast_tokenizer()
 run("turkmorph.fast batch 6 threads", lambda d: rs.encode_batch(d, 6))
-try:
-    import turkish_tokenizer as tt
-    T = tt.TurkishTokenizer()
-    run("TurkishTokenizer 1.0.4", lambda d: [T.encode(t) for t in d])
-except ImportError:
-    print("turkish_tokenizer not installed: skipped")
 from turkmorph.presets import full_tokenizer  # noqa: E402
 py = full_tokenizer()
 run("turkmorph Python (first 300 texts)", lambda d: [py.encode_ids(t) for t in d], texts[:300])

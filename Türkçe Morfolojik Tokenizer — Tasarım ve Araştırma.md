@@ -18,20 +18,18 @@ Temel karar: uzun kökleri **uzunluğa göre değil frekansa göre** bölmek. Uz
 
 ## Verilen kaynaklar: ne yapıyorlar, nerede kalıyorlar
 
-İki kaynak iki uç noktadır: TurkishTokenizer allomorfları birleştirir ama kayıplıdır; Morpheus kayıpsızdır ama allomorfları birleştirmez. Hedef tasarım ikisinin iyi yanını birleştirir.
+Morpheus kayıpsızdır ama allomorfları birleştirmez. Hedef tasarım kayıpsızlığı allomorf birleştirmeyle bir arada sağlar.
 
-|  | [TurkishTokenizer](https://arxiv.org/pdf/2508.14292) (Bayram vd. 2025) | [Morpheus](https://github.com/lonewolf-rd/TurkishMorpheus) (Şakar 2026) | Bu tasarım |
-| --- | --- | --- | --- |
-| Segmentasyon | Sözlük: en uzun kök eşleşmesi + iteratif ek eşleme | Nöral sınır dedektörü (Morfessor + Kalbur öğretmen) | Morfotaktik FSA üzerinde sentez-yoluyla-analiz |
-| Allomorf paylaşımı | Var (`-lAr`, `-dAn/-tAn` tek ID; `kitap/kitab` tek ID) | Yok, yüzey string'i saklanır | Var, arkifonemik ID |
-| Kayıpsızlık | Yok: ham satırlarda %0 roundtrip, `saatlerde→saatlarda` gibi kanonik yeniden yazım | %100 (byte fallback) | %100, üret-doğrula ile |
-| Ek zinciri | Ayrı tokenlar | Sık birleştirir (`leri`, `deki`) | Her morfem ayrı |
-| Sözlük | \~22K kök, \~230 ek, 10K BPE, 32K vocab | 50K segment vocab | \~30K kök + \~400 ek + \~16K LEX |
-| Boşluk | Ayrı `<space>` tokenı | Kayıpsız | Kökte örtük; istisnalar için token |
+|  | [Morpheus](https://github.com/lonewolf-rd/TurkishMorpheus) (Şakar 2026) | Bu tasarım |
+| --- | --- | --- |
+| Segmentasyon | Nöral sınır dedektörü (Morfessor + Kalbur öğretmen) | Morfotaktik FSA üzerinde sentez-yoluyla-analiz |
+| Allomorf paylaşımı | Yok, yüzey string'i saklanır | Var, arkifonemik ID |
+| Kayıpsızlık | %100 (byte fallback) | %100, üret-doğrula ile |
+| Ek zinciri | Sık birleştirir (`leri`, `deki`) | Her morfem ayrı |
+| Sözlük | 50K segment vocab | \~30K kök + \~400 ek + \~16K LEX |
+| Boşluk | Kayıpsız | Kökte örtük; istisnalar için token |
 
-TurkishTokenizer'ın kaybı tasarım kusurudur: ek ID'si yüzeyi bilmez, ama decoder'ın onu yeniden üretmek için ihtiyaç duyduğu istisna bilgisi (ör. `saat` kökünün ince ünlü uyumu) hiçbir yerde saklanmaz. Morpheus'un README'sindeki fenomen tablosu bunu doğruluyor: ünsüz yumuşaması ve ödünç kelime uyum istisnalarında TurkishTokenizer sınırı doğru koyuyor ama yüzey eşleşmesi %0'a düşüyor.
-
-Morpheus'un kendi sınırı: ünsüz yumuşamasında %14, ünlü düşmesinde %17 doğruluk; ek zincirlerini birleştirme eğiliminde (`demir | cilik`). Yani yüzey koruyan nöral yaklaşım düzensiz durumları öğrenemiyor.
+Morpheus'un sınırı: ünsüz yumuşamasında %14, ünlü düşmesinde %17 doğruluk; ek zincirlerini birleştirme eğiliminde (`demir | cilik`). Yani yüzey koruyan nöral yaklaşım düzensiz durumları öğrenemiyor.
 
 Çıkarım: kayıpsızlık ile allomorf birleştirme çelişmez. Gereken şey, düzensizliği **token'a değil kök sözlük kaydına** yazmak.
 
@@ -42,7 +40,6 @@ Bulabildiğim kadarıyla yok: tam morfotaktik + arkifonemik ek ID'si + leksikal 
 | Çalışma | Ne sağlıyor | Eksik olan |
 | --- | --- | --- |
 | Oflazer iki-seviyeli analizör (1994), [TRmorph](https://lexitron.nectec.or.th/public/LREC-2010_Malta/pdf/109_Paper.pdf) (Çöltekin), Zemberek, [TRMOR](https://journals.tubitak.gov.tr/elektrik/vol27/iss5/41), [MorTur](https://aclweb.org/anthology/2020.lrec-1.491.pdf) | FST tabanlı tam analiz + üretim; leksikon, morfotaktik ve iki-seviyeli fonoloji kuralları; TRmorph'ta segmentasyon ve bilinmeyen kelime tahmincisi | Tokenizer değiller: vocab, ID, BPE fallback, LM'e uygun dizi yok. Kelime başına çok analiz döndürüyorlar (`dolardır` için 4, 5 ve 17 analiz) |
-| [TurkishTokenizer](https://arxiv.org/pdf/2508.14292) | Allomorf paylaşımlı ek ID'leri, `<uppercase>`, BPE fallback | Kayıplı; açgözlü kök eşleşmesi; düzensizlik leksikonda kodlanmamış |
 | [Morpheus](https://arxiv.org/abs/2606.18717) | Kayıpsız, nöral, kök-aile embedding'i | Allomorf paylaşımı yok; yumuşama/düşme zayıf |
 | [MorphBPE](https://arxiv.org/abs/2502.00894) (ACL Findings 2026) | BPE birleştirmelerini morfem sınırını aşmayacak şekilde kısıtlar; inference standart BPE | Allomorf normalizasyonu yok; Türkçe'de denenmemiş (İng./Rus./Macar./Arap.) |
 | MorphPiece (Jabbar 2023) | Önce morfem, sonra BPE (İngilizce) | Türkçe fonolojisi yok |
@@ -189,18 +186,18 @@ Dürüst beklenti: küçük ölçekte (≤1B) morfoloji hassas görevlerde ve ö
 
 **Kanıt durumu**
 
-- Lehte: [MorphBPE](https://aclanthology.org/2026.findings-acl.2068.pdf) 300M ve 1B modellerde daha düşük cross-entropy ve daha hızlı yakınsama raporluyor; Macarca dahil. Toraman vd. (2023) morfolojik tokenizer'ın Türkçe'de rekabetçi olduğunu buldu. TurkishTokenizer çalışması TR% ve Pure% ile TR-MMLU arasında korelasyon iddia ediyor.
+- Lehte: [MorphBPE](https://aclanthology.org/2026.findings-acl.2068.pdf) 300M ve 1B modellerde daha düşük cross-entropy ve daha hızlı yakınsama raporluyor; Macarca dahil. Toraman vd. (2023) morfolojik tokenizer'ın Türkçe'de rekabetçi olduğunu buldu.
 - Aleyhte: [Rethinking Tokenization for Rich Morphology](https://arxiv.org/pdf/2508.08424) algoritma seçiminin (Unigram vs BPE) morfolojik hizalamadan daha belirleyici olduğunu buldu; Arnett ve Bergen (2025) hizalamanın downstream varyansın az kısmını açıkladığını raporluyor.
 - Yorum: TR% / Pure% gibi metrikler hizalamayı ölçer, model kalitesini değil. Asıl test eşit hesap ve eşit metin altında BPC ve morfoloji hassas benchmark'lar.
 
 **Fertility maliyetini geri almak için iki yol**
 
 1. **Kayıpsız birleştirme katmanı.** Çok sık `kök+ek` ya da `ek+ek` kombinasyonları (`ları`, `ında`, `lerinde`) birleşik ID alır ama bileşen ID'lerini metadata olarak taşır. Morpheus da bunu planlıyor.
-2. **Kelime düzeyi composer.** Senin A3t / tiered composer çalışman tam bu boşluğa oturuyor: tokenizer morfemleri verir, composer kelime vektörünü kurar, transformer kelime düzeyinde çalışır; dizi uzunluğu kelime sayısına iner. Bu tokenizer, şu an kayıplı olan TurkishTokenizer v1.0.4 substratının kayıpsız bir yerine geçeni olabilir.
+2. **Kelime düzeyi composer.** Senin A3t / tiered composer çalışman tam bu boşluğa oturuyor: tokenizer morfemleri verir, composer kelime vektörünü kurar, transformer kelime düzeyinde çalışır; dizi uzunluğu kelime sayısına iner.
 
 ## Değerlendirme protokolü
 
-Karşılaştırma byte-level BPE, Unigram, TurkishTokenizer ve Morpheus'a karşı, aynı korpus ve aynı vocab bütçesinde yapılmalı; ana metrik BPC, per-token perplexity değil.
+Karşılaştırma byte-level BPE, Unigram ve Morpheus'a karşı, aynı korpus ve aynı vocab bütçesinde yapılmalı; ana metrik BPC, per-token perplexity değil.
 
 | Katman | Metrik | Kaynak / set |
 | --- | --- | --- |
@@ -247,8 +244,6 @@ Bilinen sınırlar: leksikon el yazımı ve küçük; belirsizlik giderme el aya
 
 ## Kaynaklar
 
-- [Tokens with Meaning: A Hybrid Tokenization Approach (Bayram vd., arXiv 2508.14292)](https://arxiv.org/pdf/2508.14292)
-- [TurkishTokenizer HF Space (alibayram)](https://huggingface.co/spaces/alibayram/turkish_tiktokenizer)
 - [TurkishMorpheus (GitHub)](https://github.com/lonewolf-rd/TurkishMorpheus) · [Morpheus makalesi (arXiv 2606.18717)](https://arxiv.org/abs/2606.18717)
 - [MorphBPE (arXiv 2502.00894)](https://arxiv.org/abs/2502.00894) · [MorphBPE, ACL Findings 2026](https://aclanthology.org/2026.findings-acl.2068.pdf)
 - [Rethinking Tokenization for Rich Morphology (arXiv 2508.08424)](https://arxiv.org/pdf/2508.08424)

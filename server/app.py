@@ -1,7 +1,6 @@
-"""Local test server: how TurkMorph splits text and puts it back together,
-side by side with TurkishTokenizer (if installed in the running Python).
+"""Local test server: how TurkMorph splits text and puts it back together.
 
-    <python with turkish_tokenizer>/bin/python server/app.py [--port 8765]
+    python server/app.py [--port 8765]
     then open http://localhost:8765
 """
 from __future__ import annotations
@@ -19,12 +18,6 @@ sys.path.insert(0, str(ROOT))
 from turkmorph.morphology import SUFFIXES, suffix_base             # noqa: E402
 from turkmorph.presets import full_tokenizer                       # noqa: E402
 from turkmorph.tokenizer import group_flags                        # noqa: E402
-
-try:
-    import turkish_tokenizer as _tt
-    TT = _tt.TurkishTokenizer()
-except Exception:                                                  # optional
-    TT = None
 
 TOK = full_tokenizer()
 PAGE = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
@@ -97,18 +90,6 @@ def turkmorph(text: str, context: bool = False) -> dict:
             "words": words, "encode_ms": round(enc_ms, 2)}
 
 
-def turkish_tokenizer(text: str) -> dict | None:
-    if TT is None:
-        return None
-    t0 = time.perf_counter()
-    items = TT.tokenize_text(text)
-    enc_ms = (time.perf_counter() - t0) * 1000
-    decoded = TT.decode(TT.encode(text))
-    return {"n_tokens": len(items), "decoded": decoded, "lossless": decoded == text,
-            "lossless_loose": decoded.strip() == text.strip(), "encode_ms": round(enc_ms, 2),
-            "tokens": [{"tok": d["token"], "id": d["id"], "ns": d["type"]} for d in items]}
-
-
 class Handler(BaseHTTPRequestHandler):
     def _send(self, code, body, ctype):
         data = body.encode("utf-8")
@@ -147,7 +128,7 @@ class Handler(BaseHTTPRequestHandler):
             return bad_request(400, "text must be a string in a JSON object")
         text = body.get("text", "")[:20000]
         ctx = bool(body.get("context"))
-        res = {"turkmorph": turkmorph(text, ctx), "turkish_tokenizer": turkish_tokenizer(text),
+        res = {"turkmorph": turkmorph(text, ctx),
                "vocab": {"turkmorph": len(TOK.vocab)}, "context_available": CTX is not None,
                "context": ctx and CTX is not None}
         self._send(200, json.dumps(res, ensure_ascii=False), "application/json; charset=utf-8")
@@ -162,7 +143,7 @@ def main():
     ap.add_argument("--host", default="127.0.0.1")
     args = ap.parse_args()
     print(f"TurkMorph test server on http://localhost:{args.port}  "
-          f"(TurkishTokenizer: {'on' if TT else 'not installed'}, context mode: {'on' if CTX else 'off'})",
+          f"(context mode: {'on' if CTX else 'off'})",
           flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
 

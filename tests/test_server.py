@@ -13,7 +13,6 @@ def app(monkeypatch):
     import turkmorph.presets
 
     monkeypatch.setattr(turkmorph.presets, "full_tokenizer", lambda: None)
-    monkeypatch.setitem(sys.modules, "turkish_tokenizer", types.ModuleType("turkish_tokenizer"))
     monkeypatch.setitem(sys.modules, "turkmorph.context", types.ModuleType("turkmorph.context"))
     spec = importlib.util.spec_from_file_location(
         "review_server", Path(__file__).resolve().parents[1] / "server" / "app.py")
@@ -48,7 +47,6 @@ def test_invalid_request(app, body, length, code):
 def test_valid_request(app):
     app.TOK = types.SimpleNamespace(vocab=[])
     app.turkmorph = lambda text, context: {"decoded": text}
-    app.turkish_tokenizer = lambda text: None
     handler = object.__new__(app.Handler)
     handler.path = "/api/tokenize"
     body = b'{"text":"hello"}'

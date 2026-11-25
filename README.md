@@ -104,9 +104,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q
 python3 scripts/errors.py            # UD test hata analizi -> data/errors.json
 python3 scripts/eval_noise.py        # yazım hatası / ASCII ölçümü -> data/eval_noise.json
 python3 scripts/train_context.py      # (B) bağlam modeli, GPU ~12 dk -> data/context.pt
-python3 -m venv --system-site-packages .venv-tt && .venv-tt/bin/pip install turkish-tokenizer==1.0.4
-.venv-tt/bin/python scripts/compare_tt.py   # TurkishTokenizer 1.0.4 ile karşılaştırma -> data/compare_tt.json
-.venv-tt/bin/python server/app.py          # test sunucusu: http://localhost:8765 (bağlam modu anahtarlı)
+python3 server/app.py          # test sunucusu: http://localhost:8765 (bağlam modu anahtarlı)
 ```
 
 Çalışma zamanı bağımlılığı yok (Python ≥ 3.10 standart kütüphanesi). `TURKMORPH_PROCS`
@@ -232,32 +230,11 @@ Kelime başına token sayısı bilinçli bir tercih: her morfem ayrı token ve u
 karşılayabilir. Bunun için iki araç hazır: birleştirme katmanı (`turkmorph/merge.py`) ve
 composer'a gruplu girdi (`encode_grouped`).
 
-## TurkishTokenizer (alibayram, `turkish-tokenizer` 1.0.4) ile karşılaştırma
-
-`scripts/compare_tt.py`; TurkishTokenizer ayrı bir sanal ortamda (`pip install turkish-tokenizer==1.0.4`).
-
-| | TurkMorph | TurkishTokenizer 1.0.4 |
-| --- | --- | --- |
-| Kayıpsız, UD test cümleleri (tam / baştaki-sondaki boşluk hariç) | **100% / 100%** | 0% / 87.5% |
-| Kayıpsız, BellaTurca held-out belgeleri | **100% / 100%** | 0% / 2.3% |
-| Kök = UD lemması | **88.5%** | 74.0% |
-| Token / kelime (UD test) | 2.20 | **1.95** |
-| Karakter / token | 2.99 | **3.39** |
-| Hız (ilk geçiş / önbellekli, kelime/sn) | 2.7K / 555K | **1.3M / 1.4M** (Rust) |
-| ASCII yazımda temiz kelimenin kökü bulunuyor | **96.1%** | 18.4% |
-| Tek harf hatasında temiz kelimenin kökü bulunuyor | **84.0%** | 22.8% |
-
-TurkishTokenizer yüzeyi kanonik biçime yeniden yazıyor: `saatlerde` → "saatlarda", `sütü` → "südü",
-`2023'te` → "2023'da", `çocukken` → "çocukkan", `şundan` → "şünden". Fenomen setinde uyum istisnası
-(%42), sayı (%54), kısaltma (%50), küçültme (%0) kategorilerinde yüzey bozuluyor; TurkMorph'ta hepsi %100.
-TurkishTokenizer kelime başına daha az token kullanıyor. Bu tablodaki hız karşılaştırması
-TurkMorph'un Python sürümüne aittir; mevcut Rust sürümünü ölçmek için `scripts/bench_fast.py` kullanılabilir.
-
 ## Test sunucusu (`server/app.py`)
 
 Yerel web arayüzü: metni yazınca her kelimenin tokenlarını (namespace renkleri, ID, ek açıklaması),
 decode'un yüzeyi token token nasıl kurduğunu (`Kitap → Kitaplar → Kitaplarımız → Kitaplarımızı`) ve
-kayıpsızlık rozetini gösterir; aynı metnin TurkishTokenizer çıktısı yanında, decode farkı işaretli.
+kayıpsızlık rozetini gösterir.
 
 ## Hata analizi (`scripts/errors.py`, UD test, 49.8K kelime)
 
@@ -407,7 +384,7 @@ deterministik kalıyor (aynı kelime hep aynı tokenlar). Bu belirsizliği bağl
   - bitişik ilgeç/ek (`ikisinide`, `yada`)
   - `ne` kaynaşmaları (`nolur`, `naber`)
   - ASCII kontrolü artık bitişik ayırmadan önce yapılıyor
-- **Araçlar:** `scripts/compare_tt.py`, `server/` (test arayüzü).
+- **Araçlar:** `server/` (test arayüzü).
 
 ## Geliştirme turu 5 (iç numara; PyPI sürümleri 0.2.x)
 

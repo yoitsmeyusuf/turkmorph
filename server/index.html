@@ -29,7 +29,6 @@ button { font: inherit; border: 1px solid var(--line); background: var(--panel);
   padding: 6px 12px; border-radius: 6px; cursor: pointer; }
 button.primary { background: var(--sfx-b); border-color: var(--sfx-b); color: #fff; font-weight: 600; }
 .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-@media (min-width: 900px) { .grid { grid-template-columns: 3fr 2fr; } }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
 .panel h2 { font-size: 16px; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid; }
@@ -57,7 +56,7 @@ button.primary { background: var(--sfx-b); border-color: var(--sfx-b); color: #f
 <body>
 <main>
   <h1>TurkMorph test</h1>
-  <p class="sub">Metni yaz, nasıl bölündüğünü ve decode'un kelimeleri token token nasıl geri kurduğunu gör. Sağda TurkishTokenizer 1.0.4.</p>
+  <p class="sub">Metni yaz, nasıl bölündüğünü ve decode'un kelimeleri token token nasıl geri kurduğunu gör.</p>
   <textarea id="text">Evlerimizdekiler saatlerde geldi. Kitabımızı Danimarka'dan 2023'te getirdiler.</textarea>
   <div class="row">
     <button class="primary" id="go">Tokenize et</button>
@@ -75,7 +74,6 @@ button.primary { background: var(--sfx-b); border-color: var(--sfx-b); color: #f
   </div>
   <div class="grid">
     <section class="panel" id="tm"><h2>TurkMorph</h2><div class="meta">Tokenize et'e bas.</div></section>
-    <section class="panel" id="tt"><h2>TurkishTokenizer</h2><div class="meta">—</div></section>
   </div>
 </main>
 <script>
@@ -113,15 +111,6 @@ function renderTM(r, text, vocab, ctx) {
     <div class="decoded">decode: ${diffHtml(r.decoded, text)}</div>`;
 }
 
-function renderTT(r, text) {
-  if (!r) { $("#tt").innerHTML = `<h2>TurkishTokenizer</h2><div class="meta">Bu Python'da kurulu değil.</div>`; return; }
-  const loose = !r.lossless && r.lossless_loose ? " (yalnızca baştaki boşluk farklı)" : "";
-  $("#tt").innerHTML = `<h2>TurkishTokenizer ${badge(r.lossless, "kayıpsız ✓", "fark var ✗")}
-    <span class="meta">${r.n_tokens} token · ${r.encode_ms} ms${loose}</span></h2>
-    <div class="chips">${r.tokens.map(chip).join("")}</div>
-    <div class="decoded">decode: ${diffHtml(r.decoded, text)}</div>`;
-}
-
 async function run() {
   const text = $("#text").value;
   $("#go").disabled = true;
@@ -131,7 +120,6 @@ async function run() {
     const d = await res.json();
     if (!res.ok) throw new Error(d.error || `HTTP ${res.status}`);
     renderTM(d.turkmorph, text, d.vocab.turkmorph, d.context);
-    renderTT(d.turkish_tokenizer, text);
   } catch (e) {
     $("#tm").innerHTML = `<h2>TurkMorph</h2><div class="meta">Sunucuya ulaşılamadı: ${esc(e)}</div>`;
   } finally { $("#go").disabled = false; }
